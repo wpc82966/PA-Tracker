@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA Tracker — Prior Authorization Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--sf:#fff;--sf2:#f8f9fb;
+  --ink:#111827;--ink2:#4b5563;--ink3:#9ca3af;
+  --blue:#2563eb;--blue2:#1d4ed8;--blueS:#eff6ff;
+  --green:#059669;--greenS:#ecfdf5;
+  --red:#dc2626;--redS:#fef2f2;
+  --amber:#d97706;--amberS:#fffbeb;
+  --purple:#7c3aed;--purpleS:#f5f3ff;
+  --orange:#ea580c;--orangeS:#fff7ed;
+  --sb:#0f172a;
+  --font:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --r:10px;--sh:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+}
+html{font-size:14px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;display:flex}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit}
+.app{display:flex;width:100%;min-height:100vh}
+.sidebar{width:220px;background:var(--sb);color:#94a3b8;display:flex;flex-direction:column;flex-shrink:0;position:fixed;height:100vh;overflow-y:auto;z-index:10}
+.sb-brand{padding:20px 18px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sb-brand h1{font-size:16px;font-weight:700;color:#fff;letter-spacing:-0.3px}
+.sb-brand p{font-size:10px;color:#64748b;margin-top:2px}
+.sb-nav{flex:1;padding:12px 8px}
+.nb{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:8px;font-size:12.5px;font-weight:500;color:#94a3b8;transition:all 0.15s;margin-bottom:2px;text-align:left}
+.nb:hover{background:rgba(255,255,255,0.06);color:#e2e8f0}
+.nb.on{background:rgba(59,130,246,0.15);color:#60a5fa}
+.nb span:first-child{font-size:16px;width:20px;text-align:center}
+.sb-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px}
+.main{flex:1;margin-left:220px;padding:28px 32px;min-height:100vh;overflow-x:hidden}
+.page{animation:fi 0.2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--sf);border:1px solid #e5e7eb;border-radius:var(--r);box-shadow:var(--sh)}
+.st{padding:18px 20px}
+.st-l{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px}
+.st-v{font-size:28px;font-weight:800;margin-top:4px;letter-spacing:-0.5px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;background:var(--sf2);border-bottom:1px solid #e5e7eb}
+td{padding:10px 14px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+tr:hover td{background:#fafbfd}
+tr.ck{cursor:pointer}tr.ck:hover td{background:var(--blueS)}
+.bg{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:50px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:600;transition:all 0.15s}
+.btn:active{transform:scale(0.97)}
+.bp{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(37,99,235,0.3)}.bp:hover{background:var(--blue2)}
+.bs{background:var(--sf);color:var(--ink2);border:1px solid #d1d5db}.bs:hover{background:var(--sf2)}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.3px}
+.inp{width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;background:var(--sf);font-size:13px;transition:border-color 0.15s}
+.inp:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.flt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:5px 12px;border-radius:50px;font-size:11px;font-weight:600;border:1px solid #e5e7eb;color:var(--ink3);background:var(--sf);cursor:pointer;transition:all 0.15s}
+.chip:hover{border-color:#bcc3cd}.chip.on{border-color:var(--blue);background:var(--blueS);color:var(--blue)}
+.prg{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+.prg-b{height:100%;border-radius:3px;transition:width 0.3s}
+.mono{font-family:var(--mono)}.mu{color:var(--ink3)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fb{display:flex;justify-content:space-between;align-items:center}
+.mb{margin-bottom:16px}.mt{margin-top:16px}
+.p{padding:18px 20px}
+.bk{font-size:12px;color:var(--blue);cursor:pointer;margin-bottom:12px}.bk:hover{text-decoration:underline}
+.stl{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.ety{text-align:center;padding:40px;color:var(--ink3)}
+.al{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:500;margin-bottom:14px}
+.alr{background:var(--redS);color:var(--red);border:1px solid #fecaca}
+.ala{background:var(--amberS);color:var(--amber);border:1px solid #fde68a}
+.dl{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:12.5px}
+.dl dt{color:var(--ink3);font-weight:500}.dl dd{font-weight:600}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const{useState,useEffect,useCallback,useMemo}=React;
+
+// STATUS CONFIG
+const SC={DRAFT:{l:'Draft',c:'#64748b',bg:'#f1f5f9'},INFO_NEEDED:{l:'Info Needed',c:'#d97706',bg:'#fffbeb'},READY_TO_SUBMIT:{l:'Ready',c:'#2563eb',bg:'#eff6ff'},SUBMITTED:{l:'Submitted',c:'#7c3aed',bg:'#f5f3ff'},PENDING_PAYER_REVIEW:{l:'Pending Review',c:'#9333ea',bg:'#faf5ff'},APPROVED:{l:'Approved',c:'#059669',bg:'#ecfdf5'},DENIED:{l:'Denied',c:'#dc2626',bg:'#fef2f2'},APPEAL:{l:'Appeal',c:'#ea580c',bg:'#fff7ed'},APPROVED_ON_APPEAL:{l:'Approved (Appeal)',c:'#059669',bg:'#ecfdf5'},DENIED_FINAL:{l:'Denied Final',c:'#991b1b',bg:'#fef2f2'}};
+
+// STATE MACHINE per Build Authority §5
+const TR={DRAFT:['INFO_NEEDED','READY_TO_SUBMIT'],INFO_NEEDED:['DRAFT','READY_TO_SUBMIT'],READY_TO_SUBMIT:['SUBMITTED','INFO_NEEDED','DRAFT'],SUBMITTED:['PENDING_PAYER_REVIEW','APPROVED','DENIED'],PENDING_PAYER_REVIEW:['APPROVED','DENIED','INFO_NEEDED'],APPROVED:[],DENIED:['APPEAL','DENIED_FINAL'],APPEAL:['APPROVED_ON_APPEAL','DENIED_FINAL'],APPROVED_ON_APPEAL:[],DENIED_FINAL:[]};
+
+function valTr(from,to,ctx){
+  if(!TR[from]?.includes(to))return`Invalid: ${from} → ${to}`;
+  if(['APPROVED','APPROVED_ON_APPEAL'].includes(to)){if(!ctx.authNumber)return'Requires auth number';if(!ctx.startDate||!ctx.endDate)return'Requires date range';}
+  if(['DENIED','DENIED_FINAL'].includes(to)){if(!ctx.denialCode)return'Requires denial code';if(!ctx.denialReason)return'Requires denial reason';}
+  if(to==='APPEAL'&&!ctx.appealReason)return'Requires appeal reason';
+  return null;
+}
+
+// DEMO DATA
+const MEDS=[
+  {id:'m1',j:'J0135',b:'Humira',g:'adalimumab',mf:'AbbVie',cad:2,u:40,cost:12500,hd:true,t:true},
+  {id:'m2',j:'J1745',b:'Remicade',g:'infliximab',mf:'Janssen',cad:8,u:300,cost:5200,hd:true,t:true},
+  {id:'m3',j:'J3262',b:'Actemra',g:'tocilizumab',mf:'Genentech',cad:4,u:400,cost:4800,hd:true,t:true},
+  {id:'m4',j:'J0129',b:'Orencia',g:'abatacept',mf:'BMS',cad:4,u:750,cost:4200,hd:true,t:true},
+  {id:'m5',j:'J9312',b:'Rituxan',g:'rituximab',mf:'Genentech',cad:26,u:1000,cost:8900,hd:true,t:true},
+  {id:'m6',j:'J3357',b:'Stelara',g:'ustekinumab',mf:'Janssen',cad:12,u:90,cost:180000,hd:true,t:false},
+  {id:'m7',j:'J1602',b:'Simponi Aria',g:'golimumab',mf:'Janssen',cad:8,u:200,cost:27500,hd:true,t:true},
+];
+const CPS=[{id:'c1',cd:'96413',ds:'Chemo IV infusion, up to 1 hr'},{id:'c2',cd:'96415',ds:'Chemo IV, each addl hr'},{id:'c3',cd:'96365',ds:'IV infusion therapeutic, up to 1 hr'},{id:'c4',cd:'96366',ds:'IV infusion, each addl hr'},{id:'c5',cd:'96372',ds:'Therapeutic injection SC/IM'}];
+const ICS=[{id:'i1',cd:'M05.79',ds:'RA with RF, multiple sites'},{id:'i2',cd:'M06.09',ds:'RA without RF, multiple sites'},{id:'i3',cd:'M45.0',ds:'Ankylosing spondylitis'},{id:'i4',cd:'L40.50',ds:'Psoriatic arthritis'},{id:'i5',cd:'M32.10',ds:'SLE, organ involvement'},{id:'i6',cd:'K50.90',ds:"Crohn's disease"}];
+const PYS=[{id:'py1',n:'Aetna',cd:'AETNA001',tu:14},{id:'py2',n:'UnitedHealthcare',cd:'UHC001',tu:10},{id:'py3',n:'Blue Cross Blue Shield',cd:'BCBS001',tu:12},{id:'py4',n:'Cigna',cd:'CIGNA001',tu:15},{id:'py5',n:'Medicare Part B',cd:'MCARE_B',tu:7}];
+const PTS=[{id:'p1',mrn:'MRN-10001',f:'Margaret',l:'Wilson',dob:'1958-03-15',ph:'555-0101',t:true},{id:'p2',mrn:'MRN-10002',f:'Robert',l:'Chen',dob:'1972-08-22',ph:'555-0102',t:false},{id:'p3',mrn:'MRN-10003',f:'Patricia',l:'Davis',dob:'1965-11-30',ph:'555-0103',t:true},{id:'p4',mrn:'MRN-10004',f:'James',l:'Garcia',dob:'1980-06-10',ph:'555-0104',t:false},{id:'p5',mrn:'MRN-10005',f:'Dorothy',l:'Martinez',dob:'1950-01-05',ph:'555-0105',t:true},{id:'p6',mrn:'MRN-10006',f:'William',l:'Johnson',dob:'1975-09-18',ph:'555-0106',t:false},{id:'p7',mrn:'MRN-10007',f:'Barbara',l:'Lee',dob:'1968-12-02',ph:'555-0107',t:true}];
+
+const initA=()=>[
+  {id:'a1',pi:'p1',yi:'py1',mi:'m2',s:'APPROVED',an:'AUTH-2025-00001',sd:'2025-01-15',ed:'2025-07-15',au:2400,uu:1920,dp:'BUY_AND_BILL',ca:8,cp:['c1','c2'],ic:['i1'],b3:true,hd:true,co:1248000,rd:'2025-06-15',hi:[{f:'DRAFT',t:'APPROVED',d:'2025-01-10',by:'Sarah Jones'}],dc:null,dr:null,ar:null},
+  {id:'a2',pi:'p2',yi:'py2',mi:'m3',s:'PENDING_PAYER_REVIEW',an:null,sd:'2025-02-01',ed:'2025-08-01',au:null,uu:0,dp:'BUY_AND_BILL',ca:4,cp:['c3','c4'],ic:['i2'],b3:false,hd:true,co:0,rd:null,hi:[{f:'DRAFT',t:'SUBMITTED',d:'2025-01-28',by:'Sarah Jones'},{f:'SUBMITTED',t:'PENDING_PAYER_REVIEW',d:'2025-01-29',by:'Sarah Jones'}],dc:null,dr:null,ar:null},
+  {id:'a3',pi:'p3',yi:'py3',mi:'m5',s:'DENIED',an:null,sd:'2025-02-10',ed:'2025-08-10',au:null,uu:0,dp:'BUY_AND_BILL',ca:26,cp:['c1','c2'],ic:['i1','i5'],b3:true,hd:true,co:0,rd:null,hi:[{f:'SUBMITTED',t:'DENIED',d:'2025-02-12',by:'System'}],dc:'AUTH-D-01',dr:'Step therapy not met — must trial methotrexate',ar:null},
+  {id:'a4',pi:'p4',yi:'py4',mi:'m4',s:'APPROVED',an:'AUTH-2025-00004',sd:'2024-12-01',ed:'2025-06-01',au:4500,uu:3750,dp:'BUY_AND_BILL',ca:4,cp:['c3','c4'],ic:['i4'],b3:false,hd:true,co:1890000,rd:'2025-05-01',hi:[{f:'DRAFT',t:'APPROVED',d:'2024-11-25',by:'Sarah Jones'}],dc:null,dr:null,ar:null},
+  {id:'a5',pi:'p5',yi:'py5',mi:'m6',s:'APPEAL',an:null,sd:'2025-01-20',ed:'2025-07-20',au:null,uu:0,dp:'SPECIALTY_PHARMACY',ca:12,cp:['c3'],ic:['i6'],b3:false,hd:true,co:0,rd:null,hi:[{f:'SUBMITTED',t:'DENIED',d:'2025-02-01',by:'System'},{f:'DENIED',t:'APPEAL',d:'2025-02-15',by:'Dr. Patel'}],dc:'AUTH-D-02',dr:'Off-label use',ar:"Clinical docs support medical necessity for Crohn's"},
+  {id:'a6',pi:'p6',yi:'py1',mi:'m7',s:'DRAFT',an:null,sd:'2025-03-01',ed:'2025-09-01',au:null,uu:0,dp:'BUY_AND_BILL',ca:8,cp:['c3','c4'],ic:['i3'],b3:false,hd:true,co:0,rd:null,hi:[],dc:null,dr:null,ar:null},
+  {id:'a7',pi:'p7',yi:'py2',mi:'m1',s:'APPROVED',an:'AUTH-2025-00007',sd:'2025-01-01',ed:'2025-07-01',au:1040,uu:520,dp:'SPECIALTY_PHARMACY',ca:2,cp:['c5'],ic:['i4'],b3:false,hd:true,co:1300000,rd:'2025-06-01',hi:[{f:'DRAFT',t:'APPROVED',d:'2024-12-28',by:'Sarah Jones'}],dc:null,dr:null,ar:null},
+];
+
+// HELPERS
+const GP=(id)=>PTS.find(p=>p.id===id);
+const GY=(id)=>PYS.find(p=>p.id===id);
+const GM=(id)=>MEDS.find(m=>m.id===id);
+const Pct=(u,t)=>t>0?Math.round((u/t)*100):0;
+const Fmt=(c)=>'$'+(c/100).toLocaleString();
+const Bdg=({s})=>{const c=SC[s];return c?<span className="bg" style={{background:c.bg,color:c.c}}>{c.l}</span>:<span className="bg">{s}</span>;};
+
+// ============================================================
+// APP
+// ============================================================
+function App(){
+  const[pg,setPg]=useState('dash');
+  const[auths,setAuths]=useState(initA);
+  const[did,setDid]=useState(null);
+  const[alog,setAlog]=useState([
+    {ts:'2025-02-18 09:15',u:'Sarah Jones',a:'STATUS_CHANGE',e:'authorization',d:'a1 DRAFT→APPROVED'},
+    {ts:'2025-02-18 08:42',u:'Sarah Jones',a:'CREATE',e:'authorization',d:'Created auth for William Johnson'},
+    {ts:'2025-02-17 16:30',u:'Dr. Patel',a:'STATUS_CHANGE',e:'authorization',d:'a5 DENIED→APPEAL'},
+    {ts:'2025-02-17 14:12',u:'System',a:'REAUTH_TRIGGERED',e:'authorization',d:'a4 unit exhaustion ≥80%'},
+    {ts:'2025-02-17 10:05',u:'Sarah Jones',a:'CSV_IMPORT',e:'import',d:'47 rows, 2 duplicates skipped'},
+    {ts:'2025-02-16 11:00',u:'Admin',a:'LOGIN',e:'user',d:'admin@rheumclinic.com'},
+  ]);
+  const goA=(id)=>{setDid(id);setPg('det');};
+  const nav=[{k:'dash',i:'📊',l:'Dashboard'},{k:'auth',i:'📋',l:'Authorizations'},{k:'pat',i:'👥',l:'Patients'},{k:'med',i:'💊',l:'Medications'},{k:'rep',i:'📈',l:'Reports'},{k:'imp',i:'📤',l:'CSV Import'},{k:'aud',i:'🔍',l:'Audit Log'}];
+
+  return(<div className="app">
+    <aside className="sidebar">
+      <div className="sb-brand"><h1>PA Tracker</h1><p>Rheumatology Auth Management</p></div>
+      <nav className="sb-nav">{nav.map(n=><button key={n.k} className={`nb ${pg===n.k||(pg==='det'&&n.k==='auth')?'on':''}`} onClick={()=>{setPg(n.k);setDid(null);}}><span>{n.i}</span><span>{n.l}</span></button>)}</nav>
+      <div className="sb-user"><div style={{color:'#e2e8f0',fontWeight:600}}>Sarah Jones</div><div>Auth Coordinator</div></div>
+    </aside>
+    <div className="main"><div className="page">
+      {pg==='dash'&&<Dash auths={auths} goA={goA}/>}
+      {pg==='auth'&&<AList auths={auths} goA={goA}/>}
+      {pg==='det'&&<ADet auths={auths} setAuths={setAuths} id={did} goB={()=>setPg('auth')} alog={alog} setAlog={setAlog}/>}
+      {pg==='pat'&&<Pats/>}
+      {pg==='med'&&<Meds/>}
+      {pg==='rep'&&<Reps auths={auths}/>}
+      {pg==='imp'&&<Imps/>}
+      {pg==='aud'&&<Aud log={alog}/>}
+    </div></div>
+  </div>);
+}
+
+// DASHBOARD
+function Dash({auths,goA}){
+  const bys=(s)=>auths.filter(a=>a.s===s).length;
+  const apr=auths.filter(a=>['APPROVED','APPROVED_ON_APPEAL'].includes(a.s));
+  const rdu=apr.filter(a=>a.rd&&a.rd<='2025-04-01');
+  const exh=apr.filter(a=>a.au&&Pct(a.uu,a.au)>=80);
+  const e34=auths.filter(a=>a.b3&&['APPROVED','APPROVED_ON_APPEAL'].includes(a.s));
+  return(<div>
+    <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>Dashboard</h2>
+    <div className="g4 mb">
+      <div className="card st"><div className="st-l">Pending Review</div><div className="st-v" style={{color:'var(--purple)'}}>{bys('PENDING_PAYER_REVIEW')}</div></div>
+      <div className="card st"><div className="st-l">Approved Active</div><div className="st-v" style={{color:'var(--green)'}}>{apr.length}</div></div>
+      <div className="card st"><div className="st-l">Denied (Appealable)</div><div className="st-v" style={{color:'var(--red)'}}>{bys('DENIED')}</div></div>
+      <div className="card st"><div className="st-l">Draft / In Progress</div><div className="st-v" style={{color:'var(--blue)'}}>{bys('DRAFT')+bys('INFO_NEEDED')+bys('READY_TO_SUBMIT')}</div></div>
+    </div>
+    <div className="g3 mb">
+      <div className="card st"><div className="st-l">⏰ Reauth Due (60d)</div><div className="st-v" style={{color:'var(--orange)'}}>{rdu.length}</div></div>
+      <div className="card st"><div className="st-l">📉 Unit Exhaustion ≥80%</div><div className="st-v" style={{color:'var(--red)'}}>{exh.length}</div></div>
+      <div className="card st"><div className="st-l">⚠️ 340B Exposed</div><div className="st-v" style={{color:'var(--purple)'}}>{e34.length}</div></div>
+    </div>
+    {exh.length>0&&<div className="card mb"><div className="p"><h3 style={{fontSize:14,fontWeight:700,marginBottom:12}}>🚨 Unit Exhaustion Alerts</h3>
+    <table><thead><tr><th>Patient</th><th>Medication</th><th>Usage</th><th>Remaining</th><th>End Date</th></tr></thead><tbody>
+      {exh.map(a=>{const p=GP(a.pi),m=GM(a.mi),pc=Pct(a.uu,a.au);return(<tr key={a.id} className="ck" onClick={()=>goA(a.id)}><td style={{fontWeight:600}}>{p.l}, {p.f} <span className="mu">({p.mrn})</span></td><td>{m.b} <span className="mono mu">{m.j}</span></td><td><div style={{display:'flex',alignItems:'center',gap:8}}><div className="prg" style={{width:60}}><div className="prg-b" style={{width:`${pc}%`,background:pc>=90?'var(--red)':'var(--amber)'}}/></div><span className="mono" style={{fontWeight:600,color:pc>=90?'var(--red)':'var(--amber)'}}>{pc}%</span></div></td><td className="mono">{a.au-a.uu}</td><td>{a.ed}</td></tr>);})}
+    </tbody></table></div></div>}
+    {rdu.length>0&&<div className="card"><div className="p"><h3 style={{fontSize:14,fontWeight:700,marginBottom:12}}>⏰ Reauthorizations Due</h3>
+    <table><thead><tr><th>Patient</th><th>Medication</th><th>Payer</th><th>Reauth Due</th><th>End Date</th></tr></thead><tbody>
+      {rdu.map(a=>{const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi);return(<tr key={a.id} className="ck" onClick={()=>goA(a.id)}><td style={{fontWeight:600}}>{p.l}, {p.f}</td><td>{m.b}</td><td>{y.n}</td><td style={{color:'var(--orange)',fontWeight:600}}>{a.rd}</td><td>{a.ed}</td></tr>);})}
+    </tbody></table></div></div>}
+  </div>);
+}
+
+// AUTH LIST
+function AList({auths,goA}){
+  const[fl,setFl]=useState('');
+  const fd=fl?auths.filter(a=>a.s===fl):auths;
+  return(<div>
+    <div className="fb mb"><h2 style={{fontSize:22,fontWeight:700}}>Authorizations</h2><button className="btn bp">+ New Authorization</button></div>
+    <div className="flt">
+      <button className={`chip ${!fl?'on':''}`} onClick={()=>setFl('')}>All ({auths.length})</button>
+      {Object.entries(SC).map(([k,v])=>{const c=auths.filter(a=>a.s===k).length;return c>0?<button key={k} className={`chip ${fl===k?'on':''}`} onClick={()=>setFl(fl===k?'':k)}>{v.l} ({c})</button>:null;})}
+    </div>
+    <div className="card" style={{overflow:'hidden'}}><table><thead><tr><th>Patient</th><th>Medication</th><th>Payer</th><th>Status</th><th>Auth #</th><th>Units</th><th>End Date</th><th>Flags</th></tr></thead><tbody>
+      {fd.map(a=>{const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi),pc=Pct(a.uu,a.au);return(<tr key={a.id} className="ck" onClick={()=>goA(a.id)}>
+        <td><div style={{fontWeight:600}}>{p.l}, {p.f}</div><div className="mu" style={{fontSize:11}}>{p.mrn}</div></td>
+        <td><div>{m.b}</div><div className="mono mu" style={{fontSize:11}}>{m.j}</div></td>
+        <td>{y.n}</td><td><Bdg s={a.s}/></td>
+        <td className="mono" style={{fontSize:11}}>{a.an||'—'}</td>
+        <td>{a.au?<div><div className="mono" style={{fontSize:11}}>{a.uu}/{a.au}</div><div className="prg" style={{width:50,marginTop:3}}><div className="prg-b" style={{width:`${Math.min(100,pc)}%`,background:pc>=80?'var(--red)':'var(--green)'}}/></div></div>:'—'}</td>
+        <td style={{fontSize:11}}>{a.ed||'—'}</td>
+        <td>{a.hd&&<span className="bg" style={{background:'var(--amberS)',color:'var(--amber)',marginRight:4}}>$$$</span>}{a.b3&&<span className="bg" style={{background:'var(--purpleS)',color:'var(--purple)'}}>340B</span>}</td>
+      </tr>);})}
+      {fd.length===0&&<tr><td colSpan={8} className="ety">No authorizations match filters</td></tr>}
+    </tbody></table></div>
+  </div>);
+}
+
+// AUTH DETAIL
+function ADet({auths,setAuths,id,goB,alog,setAlog}){
+  const[tf,setTf]=useState({});
+  const a=auths.find(x=>x.id===id);
+  if(!a)return<div className="ety">Not found</div>;
+  const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi),pc=Pct(a.uu,a.au),al=TR[a.s]||[];
+  const doTr=(to)=>{
+    const err=valTr(a.s,to,tf);if(err){alert(err);return;}
+    setAuths(pv=>pv.map(x=>x.id!==id?x:{...x,s:to,an:tf.authNumber||x.an,sd:tf.startDate||x.sd,ed:tf.endDate||x.ed,au:tf.approvedUnits?parseInt(tf.approvedUnits):x.au,dc:tf.denialCode||x.dc,dr:tf.denialReason||x.dr,ar:tf.appealReason||x.ar,hi:[...x.hi,{f:x.s,t:to,d:new Date().toISOString().substring(0,10),by:'Sarah Jones'}]}));
+    setAlog(pv=>[{ts:new Date().toLocaleString(),u:'Sarah Jones',a:'STATUS_CHANGE',e:'authorization',d:`${id} ${a.s}→${to}`},...pv]);
+    setTf({});
+  };
+  return(<div>
+    <div className="bk" onClick={goB}>← Back to Authorizations</div>
+    <div className="fb mb"><div><h2 style={{fontSize:22,fontWeight:700}}>{p.l}, {p.f}</h2><p className="mu" style={{fontSize:12}}>MRN: {p.mrn} · {m.b} ({m.j}) · {y.n}</p></div><Bdg s={a.s}/></div>
+    {a.s==='DENIED'&&<div className="al alr">⚠️ Authorization denied. Review reason and consider appeal.</div>}
+    {pc>=80&&a.au&&<div className="al ala">📉 Unit exhaustion at {pc}% — consider reauthorization.</div>}
+    <div className="g3 mb">
+      <div className="card p"><div className="stl">Authorization Details</div><dl className="dl"><dt>Auth #</dt><dd className="mono">{a.an||'—'}</dd><dt>Payer</dt><dd>{y.n}</dd><dt>Start</dt><dd>{a.sd||'—'}</dd><dt>End</dt><dd>{a.ed||'—'}</dd><dt>Dispensing</dt><dd>{a.dp==='BUY_AND_BILL'?'Buy & Bill':'Specialty Pharmacy'}</dd><dt>Cadence</dt><dd>Every {a.ca} weeks</dd><dt>Reauth Due</dt><dd style={{color:a.rd?'var(--orange)':'inherit'}}>{a.rd||'—'}</dd><dt>Est. Cost</dt><dd className="mono">{a.co?Fmt(a.co):'—'}</dd></dl></div>
+      <div className="card p"><div className="stl">Unit Tracking</div>{a.au?<><div style={{fontSize:32,fontWeight:800,color:pc>=80?'var(--red)':pc>=50?'var(--amber)':'var(--green)'}}>{pc}%</div><div className="mu" style={{fontSize:12,marginBottom:10}}>{a.uu} of {a.au} units used</div><div className="prg" style={{height:10}}><div className="prg-b" style={{width:`${Math.min(100,pc)}%`,background:pc>=80?'var(--red)':pc>=50?'var(--amber)':'var(--green)'}}/></div><div className="mu" style={{fontSize:11,marginTop:6}}>Remaining: {a.au-a.uu}</div></>:<div className="mu">No units assigned</div>}<div style={{marginTop:14,display:'flex',gap:6,flexWrap:'wrap'}}>{a.hd&&<span className="bg" style={{background:'var(--amberS)',color:'var(--amber)'}}>💰 High-Dollar</span>}{a.b3&&<span className="bg" style={{background:'var(--purpleS)',color:'var(--purple)'}}>⚠️ 340B Exposed</span>}</div></div>
+      <div className="card p"><div className="stl">CPT & ICD Codes</div><div style={{marginBottom:10}}><div style={{fontSize:10,fontWeight:600,color:'var(--ink3)',marginBottom:4}}>CPT CODES</div>{a.cp.map(ci=>{const c=CPS.find(x=>x.id===ci);return c?<div key={ci} style={{fontSize:12,marginBottom:2}}><span className="mono" style={{fontWeight:600}}>{c.cd}</span> <span className="mu">{c.ds}</span></div>:null;})}</div><div><div style={{fontSize:10,fontWeight:600,color:'var(--ink3)',marginBottom:4}}>ICD CODES</div>{a.ic.map(ii=>{const c=ICS.find(x=>x.id===ii);return c?<div key={ii} style={{fontSize:12,marginBottom:2}}><span className="mono" style={{fontWeight:600}}>{c.cd}</span> <span className="mu">{c.ds}</span></div>:null;})}</div></div>
+    </div>
+    {a.dc&&<div className="card p mb" style={{borderLeft:'4px solid var(--red)'}}><div className="stl" style={{color:'var(--red)'}}>Denial Information</div><dl className="dl"><dt>Code</dt><dd className="mono">{a.dc}</dd><dt>Reason</dt><dd>{a.dr}</dd></dl></div>}
+    {a.ar&&<div className="card p mb" style={{borderLeft:'4px solid var(--orange)'}}><div className="stl" style={{color:'var(--orange)'}}>Appeal Information</div><dl className="dl"><dt>Reason</dt><dd>{a.ar}</dd></dl></div>}
+    {al.length>0&&<div className="card p mb"><div className="stl">State Transitions</div>
+      {(al.includes('APPROVED')||al.includes('APPROVED_ON_APPEAL'))&&<div className="g2 mb" style={{maxWidth:500}}><div className="fld"><label>Auth Number</label><input className="inp" value={tf.authNumber||''} onChange={e=>setTf(p=>({...p,authNumber:e.target.value}))} placeholder="AUTH-XXXX"/></div><div className="fld"><label>Approved Units</label><input className="inp" type="number" value={tf.approvedUnits||''} onChange={e=>setTf(p=>({...p,approvedUnits:e.target.value}))}/></div><div className="fld"><label>Start Date</label><input className="inp" type="date" value={tf.startDate||''} onChange={e=>setTf(p=>({...p,startDate:e.target.value}))}/></div><div className="fld"><label>End Date</label><input className="inp" type="date" value={tf.endDate||''} onChange={e=>setTf(p=>({...p,endDate:e.target.value}))}/></div></div>}
+      {(al.includes('DENIED')||al.includes('DENIED_FINAL'))&&<div className="g2 mb" style={{maxWidth:500}}><div className="fld"><label>Denial Code</label><input className="inp" value={tf.denialCode||''} onChange={e=>setTf(p=>({...p,denialCode:e.target.value}))}/></div><div className="fld"><label>Denial Reason</label><input className="inp" value={tf.denialReason||''} onChange={e=>setTf(p=>({...p,denialReason:e.target.value}))}/></div></div>}
+      {al.includes('APPEAL')&&<div className="fld mb" style={{maxWidth:500}}><label>Appeal Reason</label><input className="inp" value={tf.appealReason||''} onChange={e=>setTf(p=>({...p,appealReason:e.target.value}))}/></div>}
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>{al.map(t=>{const c=SC[t];return<button key={t} className="btn" style={{background:c.bg,color:c.c,border:`1px solid ${c.c}30`}} onClick={()=>doTr(t)}>→ {c.l}</button>;})}</div>
+    </div>}
+    {a.hi.length>0&&<div className="card p"><div className="stl">Status History</div>{a.hi.map((h,i)=><div key={i} style={{display:'flex',alignItems:'center',gap:8,marginBottom:8,fontSize:12}}><span className="mu mono" style={{width:80,flexShrink:0,fontSize:11}}>{h.d}</span><Bdg s={h.f}/><span className="mu">→</span><Bdg s={h.t}/><span className="mu">by {h.by}</span></div>)}</div>}
+  </div>);
+}
+
+// PATIENTS
+function Pats(){
+  const[sr,setSr]=useState('');
+  const fd=PTS.filter(p=>!sr||p.mrn.toLowerCase().includes(sr.toLowerCase())||p.l.toLowerCase().includes(sr.toLowerCase()));
+  return(<div>
+    <div className="fb mb"><h2 style={{fontSize:22,fontWeight:700}}>Patients</h2><button className="btn bp">+ Add Patient</button></div>
+    <input className="inp mb" style={{maxWidth:300}} placeholder="Search MRN or name..." value={sr} onChange={e=>setSr(e.target.value)}/>
+    <div className="card" style={{overflow:'hidden'}}><table><thead><tr><th>MRN</th><th>Name</th><th>DOB</th><th>Phone</th><th>340B</th></tr></thead><tbody>
+      {fd.map(p=><tr key={p.id}><td className="mono" style={{fontWeight:600}}>{p.mrn}</td><td style={{fontWeight:600}}>{p.l}, {p.f}</td><td>{p.dob}</td><td>{p.ph}</td><td>{p.t?<span className="bg" style={{background:'var(--purpleS)',color:'var(--purple)'}}>340B</span>:'—'}</td></tr>)}
+    </tbody></table></div>
+  </div>);
+}
+
+// MEDICATIONS
+function Meds(){
+  return(<div>
+    <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>Medications — J-Code Biologics</h2>
+    <div className="card" style={{overflow:'hidden'}}><table><thead><tr><th>J-Code</th><th>Brand</th><th>Generic</th><th>Manufacturer</th><th>Cadence</th><th>Units/Infusion</th><th>Cost/Unit</th><th>Flags</th></tr></thead><tbody>
+      {MEDS.map(m=><tr key={m.id}><td className="mono" style={{fontWeight:600}}>{m.j}</td><td style={{fontWeight:600}}>{m.b}</td><td>{m.g}</td><td>{m.mf}</td><td>Q{m.cad}W</td><td className="mono">{m.u}</td><td className="mono">{Fmt(m.cost)}</td><td>{m.hd&&<span className="bg" style={{background:'var(--amberS)',color:'var(--amber)',marginRight:4}}>$$$</span>}{m.t&&<span className="bg" style={{background:'var(--purpleS)',color:'var(--purple)'}}>340B</span>}</td></tr>)}
+    </tbody></table></div>
+  </div>);
+}
+
+// REPORTS
+function Reps({auths}){
+  const[tab,setTab]=useState('340b');
+  const apr=auths.filter(a=>['APPROVED','APPROVED_ON_APPEAL'].includes(a.s));
+  const e34=apr.filter(a=>a.b3);
+  const exh=apr.filter(a=>a.au&&Pct(a.uu,a.au)>=80);
+  const rdu=apr.filter(a=>a.rd&&a.rd<='2025-04-01');
+  const hd=auths.filter(a=>a.hd);
+  const tabs=[{k:'340b',l:'340B Exposure',i:'⚠️'},{k:'ex',l:'Unit Exhaustion',i:'📉'},{k:'ra',l:'Reauth Due',i:'⏰'},{k:'hd',l:'High-Dollar',i:'💰'}];
+  return(<div>
+    <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>Reports</h2>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>{tabs.map(t=><button key={t.k} className={`btn ${tab===t.k?'bp':'bs'}`} onClick={()=>setTab(t.k)}>{t.i} {t.l}</button>)}</div>
+    {tab==='340b'&&<div className="card p"><div className="fb mb"><h3 style={{fontWeight:700}}>340B Exposure Risk</h3><span className="mu">{e34.length} exposed · {Fmt(e34.reduce((s,a)=>s+(a.co||0),0))} total</span></div><table><thead><tr><th>Patient</th><th>Medication</th><th>Payer</th><th>Dispensing</th><th>Est. Cost</th></tr></thead><tbody>{e34.map(a=>{const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi);return<tr key={a.id}><td style={{fontWeight:600}}>{p.l}, {p.f} ({p.mrn})</td><td>{m.b} ({m.j})</td><td>{y.n}</td><td>{a.dp==='BUY_AND_BILL'?'Buy & Bill':'Specialty'}</td><td className="mono">{Fmt(a.co)}</td></tr>;})}{e34.length===0&&<tr><td colSpan={5} className="ety">No 340B exposure</td></tr>}</tbody></table></div>}
+    {tab==='ex'&&<div className="card p"><h3 style={{fontWeight:700,marginBottom:12}}>Unit Exhaustion ≥80% ({exh.length} at risk)</h3><table><thead><tr><th>Patient</th><th>Medication</th><th>Usage</th><th>Remaining</th><th>End Date</th></tr></thead><tbody>{exh.map(a=>{const p=GP(a.pi),m=GM(a.mi),pc=Pct(a.uu,a.au);return<tr key={a.id}><td style={{fontWeight:600}}>{p.l}, {p.f}</td><td>{m.b}</td><td><div style={{display:'flex',alignItems:'center',gap:8}}><div className="prg" style={{width:60}}><div className="prg-b" style={{width:`${pc}%`,background:pc>=90?'var(--red)':'var(--amber)'}}/></div><span className="mono" style={{fontWeight:700,color:pc>=90?'var(--red)':'var(--amber)'}}>{pc}%</span></div></td><td className="mono">{a.au-a.uu}</td><td>{a.ed}</td></tr>;})}</tbody></table></div>}
+    {tab==='ra'&&<div className="card p"><h3 style={{fontWeight:700,marginBottom:12}}>Reauthorizations Due ({rdu.length})</h3><table><thead><tr><th>Patient</th><th>Medication</th><th>Payer</th><th>Reauth Due</th><th>End Date</th></tr></thead><tbody>{rdu.map(a=>{const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi);return<tr key={a.id}><td style={{fontWeight:600}}>{p.l}, {p.f}</td><td>{m.b}</td><td>{y.n}</td><td style={{color:'var(--orange)',fontWeight:600}}>{a.rd}</td><td>{a.ed}</td></tr>;})}</tbody></table></div>}
+    {tab==='hd'&&<div className="card p"><div className="fb mb"><h3 style={{fontWeight:700}}>High-Dollar Biologics</h3><span className="mu">{hd.length} auths · {Fmt(hd.reduce((s,a)=>s+(a.co||0),0))} total</span></div><table><thead><tr><th>Patient</th><th>Medication</th><th>Payer</th><th>Est. Cost</th><th>Status</th></tr></thead><tbody>{hd.map(a=>{const p=GP(a.pi),m=GM(a.mi),y=GY(a.yi);return<tr key={a.id}><td style={{fontWeight:600}}>{p.l}, {p.f}</td><td>{m.b} ({m.j})</td><td>{y.n}</td><td className="mono" style={{fontWeight:600}}>{Fmt(a.co)}</td><td><Bdg s={a.s}/></td></tr>;})}</tbody></table></div>}
+  </div>);
+}
+
+// IMPORTS
+function Imps(){
+  const[jobs,setJobs]=useState([{id:'j1',f:'batch-import-jan-2025.csv',st:'COMPLETED',tot:47,ok:45,err:0,dup:2,d:'2025-02-17 10:05'},{id:'j2',f:'new-patients-feb.csv',st:'PARTIAL',tot:12,ok:9,err:2,dup:1,d:'2025-02-18 08:30'}]);
+  const stc={COMPLETED:'background:var(--greenS);color:var(--green)',PARTIAL:'background:var(--amberS);color:var(--amber)',FAILED:'background:var(--redS);color:var(--red)',PENDING:'background:var(--sf2);color:var(--ink3)',PROCESSING:'background:var(--blueS);color:var(--blue)'};
+  const handleUp=(e)=>{const f=e.target.files?.[0];if(!f)return;setJobs(p=>[{id:'j'+Date.now(),f:f.name,st:'COMPLETED',tot:Math.floor(Math.random()*100)+10,ok:Math.floor(Math.random()*90)+5,err:Math.floor(Math.random()*3),dup:Math.floor(Math.random()*5),d:new Date().toLocaleString()},...p]);e.target.value='';};
+  return(<div>
+    <div className="fb mb"><h2 style={{fontSize:22,fontWeight:700}}>CSV Import</h2><label className="btn bp" style={{cursor:'pointer'}}>📤 Upload CSV<input type="file" accept=".csv" style={{display:'none'}} onChange={handleUp}/></label></div>
+    <div className="card p mb"><div className="stl">CSV Format</div><code className="mono" style={{fontSize:11,display:'block',background:'var(--sf2)',padding:10,borderRadius:6,overflowX:'auto'}}>patient_mrn,payer_id,medication_jcode,cpt_codes,icd_codes,start_date,end_date,auth_number,status,approved_units,dispensing_model</code><p className="mu" style={{fontSize:11,marginTop:6}}>CPT/ICD: pipe-delimited (96413|96415). Imports are idempotent — duplicates skipped via SHA256 hash.</p></div>
+    <div className="card" style={{overflow:'hidden'}}><table><thead><tr><th>File</th><th>Status</th><th>Total</th><th>Success</th><th>Errors</th><th>Duplicates</th><th>Date</th></tr></thead><tbody>
+      {jobs.map(j=><tr key={j.id}><td style={{fontWeight:600}}>{j.f}</td><td><span className="bg" style={Object.fromEntries((stc[j.st]||'').split(';').map(s=>s.split(':').map(x=>x.trim())))}>{j.st}</span></td><td>{j.tot}</td><td style={{color:'var(--green)',fontWeight:600}}>{j.ok}</td><td style={{color:'var(--red)',fontWeight:600}}>{j.err}</td><td className="mu">{j.dup}</td><td className="mu" style={{fontSize:11}}>{j.d}</td></tr>)}
+    </tbody></table></div>
+  </div>);
+}
+
+// AUDIT LOG
+function Aud({log}){
+  const[fl,setFl]=useState('');
+  const acts=['STATUS_CHANGE','CREATE','CSV_IMPORT','LOGIN','REAUTH_TRIGGERED','DOCUMENT_DOWNLOAD'];
+  const fd=fl?log.filter(l=>l.a===fl):log;
+  return(<div>
+    <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>Audit Log</h2>
+    <div className="flt"><button className={`chip ${!fl?'on':''}`} onClick={()=>setFl('')}>All</button>{acts.map(a=><button key={a} className={`chip ${fl===a?'on':''}`} onClick={()=>setFl(fl===a?'':a)}>{a}</button>)}</div>
+    <div className="card" style={{overflow:'hidden'}}><table><thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th></tr></thead><tbody>
+      {fd.map((l,i)=><tr key={i}><td className="mono mu" style={{fontSize:11}}>{l.ts}</td><td>{l.u}</td><td><span className="bg" style={{background:'var(--sf2)',color:'var(--ink2)'}}>{l.a}</span></td><td>{l.e}</td><td className="mu">{l.d}</td></tr>)}
+      {fd.length===0&&<tr><td colSpan={5} className="ety">No audit entries</td></tr>}
+    </tbody></table></div>
+  </div>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
