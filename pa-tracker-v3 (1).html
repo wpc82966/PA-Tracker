@@ -1,0 +1,1144 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PA Tracker v3 — CFRC Rheumatology</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f0f2f5;--sf:#fff;--ink:#0f172a;--ik2:#475569;--ik3:#94a3b8;--pri:#1e40af;--priH:#1e3a8a;--priS:#dbeafe;--priL:#eff6ff;--ok:#047857;--okS:#d1fae5;--okL:#ecfdf5;--wrn:#a16207;--wrnS:#fef08a;--wrnL:#fefce8;--err:#b91c1c;--errS:#fecaca;--errL:#fef2f2;--purp:#7c3aed;--purpS:#ede9fe;--sb:#0c1222;--f:'Plus Jakarta Sans',system-ui,sans-serif;--m:'JetBrains Mono',monospace;--r:10px;--sh:0 1px 3px rgba(0,0,0,.06)}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);font-size:12px;line-height:1.4}
+.app{display:flex;min-height:100vh}
+.sb{width:200px;background:var(--sb);color:#e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sb-hd{padding:14px 12px 8px;border-bottom:1px solid #1e293b}
+.sb-hd h1{font-size:14px;font-weight:800;color:#fff}
+.sb-hd p{font-size:9px;color:#94a3b8;margin-top:2px}
+.sb-nav{flex:1;overflow-y:auto;padding:6px}
+.sb-sec{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#64748b;padding:8px 8px 3px;font-weight:600}
+.nb{display:flex;align-items:center;gap:7px;width:100%;padding:6px 8px;border:none;background:none;color:#cbd5e1;font-size:11px;border-radius:6px;cursor:pointer;text-align:left;font-family:var(--f)}
+.nb:hover{background:#1e293b;color:#fff}
+.nb.on{background:var(--pri);color:#fff}
+.nb i{font-style:normal;font-size:13px;width:20px;text-align:center}
+.nb .ct{margin-left:auto;background:var(--err);color:#fff;font-size:8px;padding:1px 5px;border-radius:8px;font-weight:700}
+.sb-ft{padding:10px 12px;border-top:1px solid #1e293b;font-size:8px;color:#64748b}
+.mn{margin-left:200px;flex:1;min-height:100vh}
+.pg{max-width:1200px;margin:0 auto;padding:16px 20px}
+.cd{background:var(--sf);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.cd-h{padding:10px 14px;border-bottom:1px solid #e2e8f0}
+.cd-h h3{font-size:12px;font-weight:700}
+.cd-b{padding:12px 14px}
+.fb{display:flex;justify-content:space-between;align-items:center}
+.fc{display:flex;align-items:center;gap:6px}
+.mb{margin-bottom:10px}.mb2{margin-bottom:14px}
+.mu{color:var(--ik3);font-size:10px}
+.fw{font-weight:600}
+.mono{font-family:var(--m)}
+.bg{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600}
+.btn{padding:5px 10px;border-radius:6px;font-size:10px;font-weight:600;border:none;cursor:pointer;font-family:var(--f)}
+.bok{background:var(--ok);color:#fff}.bok:hover{background:#065f46}
+.bpr{background:var(--pri);color:#fff}.bpr:hover{background:var(--priH)}
+.bw{background:#f1f5f9;color:var(--ink);border:1px solid #e2e8f0}.bw:hover{background:#e2e8f0}
+.ber{background:var(--err);color:#fff}
+.bsm{padding:3px 8px;font-size:9px}
+.sg{display:grid;gap:8px}
+.sc{padding:10px 12px;cursor:pointer;transition:transform .1s}
+.sc:hover{transform:translateY(-1px)}
+.sc-l{font-size:9px;color:var(--ik2);font-weight:500;margin-bottom:2px}
+.sc-n{font-size:20px;font-weight:800;line-height:1.1}
+.al{padding:7px 10px;border-radius:var(--r);font-size:10px;font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.alr{background:var(--errL);color:var(--err);border:1px solid var(--errS)}
+.alw{background:var(--wrnL);color:var(--wrn);border:1px solid var(--wrnS)}
+.alb{background:var(--priL);color:var(--pri);border:1px solid var(--priS)}
+.alg{background:var(--okL);color:var(--ok);border:1px solid var(--okS)}
+.stl{font-size:10px;font-weight:700;color:var(--ik2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #e2e8f0}
+.flt{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.ch{padding:3px 9px;border-radius:12px;font-size:9px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-family:var(--f)}
+.ch.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{text-align:left;padding:5px 8px;background:#f8fafc;border-bottom:2px solid #e2e8f0;font-size:9px;font-weight:600;color:var(--ik2);white-space:nowrap}
+td{padding:5px 8px;border-bottom:1px solid #f1f5f9}
+tr:hover{background:#f8fafc}
+tr.ur{background:#fef2f2}tr.uy{background:#fefce8}
+tr.ck{cursor:pointer}tr.ck:hover{background:var(--priL)}
+.prg{height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden}.prg-b{height:100%;border-radius:2px;transition:width .3s}
+.ai{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .15s}
+.ai:hover{background:var(--priL)}.ai:last-child{border:none}
+.ai-i{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ai-b{flex:1;min-width:0}.ai-t{font-weight:600;font-size:11px}.ai-d{font-size:9px;color:var(--ik3)}
+.bk{font-size:10px;color:var(--pri);cursor:pointer;margin-bottom:8px;font-weight:500}
+.bk:hover{text-decoration:underline}
+.wf{display:flex;flex-direction:column;gap:6px}
+.ws{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--sf);border:1px solid #e2e8f0;border-radius:var(--r)}
+.ws.done{background:var(--okL);border-color:var(--okS)}.ws.na{background:#f8fafc;border-color:#e2e8f0;opacity:.6}
+.ws.active{border-color:var(--pri);box-shadow:0 0 0 2px var(--priS)}
+.ws.overdue{background:var(--errL);border-color:var(--errS)}
+.ws-i{font-size:16px;width:24px;text-align:center}
+.ws-b{flex:1}.ws-l{font-weight:600;font-size:11px}.ws-d{font-size:9px;color:var(--ik3)}
+.ety{text-align:center;padding:20px;color:var(--ik3);font-size:11px}
+.mo{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
+.mo-c{background:#fff;border-radius:12px;padding:20px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+input[type=text],input[type=date],input[type=number],input[type=password],select{padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:11px;font-family:var(--f);width:100%}
+input:focus,select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 2px var(--priS)}
+.form-row{display:flex;gap:8px;margin-bottom:6px;align-items:center}
+.form-label{font-size:9px;font-weight:600;color:var(--ik2);min-width:80px}
+.form-val{flex:1}
+.editable{cursor:pointer;padding:2px 4px;border-radius:4px;border:1px dashed transparent;min-height:18px}
+.editable:hover{border-color:#d1d5db;background:#f8fafc}
+.editable.empty{color:var(--ik3);font-style:italic;border-color:#fecaca;background:#fef2f2}
+.panel{background:var(--sf);border-radius:var(--r);border:1px solid #e2e8f0;padding:10px;margin-bottom:8px}
+.panel-h{font-size:10px;font-weight:700;margin-bottom:6px;color:var(--pri);display:flex;align-items:center;gap:4px}
+.lock-btn{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:9px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-family:var(--f);color:var(--ik2)}
+.lock-btn:hover{background:#f1f5f9}
+.lock-btn.unlocked{background:var(--okL);border-color:var(--okS);color:var(--ok)}
+</style></head><body><div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+if(localStorage.getItem('pa2_v')!=='19'){localStorage.clear();localStorage.setItem('pa2_v','10');}
+// PA Tracker v3 — CFRC Rheumatology — Build A+B Complete
+var h=React.createElement,useState=React.useState,useEffect=React.useEffect,useMemo=React.useMemo;
+
+// ===== LOCAL STORAGE =====
+var LS={g:function(k,d){try{var v=localStorage.getItem('pa3_'+k);return v?JSON.parse(v):d}catch(e){return d}},s:function(k,v){try{localStorage.setItem('pa3_'+k,JSON.stringify(v))}catch(e){}}};
+
+// ===== DATE HELPERS =====
+function d(offset){var t=new Date();t.setDate(t.getDate()+offset);var y=t.getFullYear(),m=String(t.getMonth()+1).padStart(2,'0'),dy=String(t.getDate()).padStart(2,'0');return y+'-'+m+'-'+dy}
+function dU(ds){if(!ds)return 999;var t=new Date();t.setHours(0,0,0,0);var p=ds.split('-');var dd=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));dd.setHours(0,0,0,0);return Math.round((dd-t)/864e5)}
+function fD(ds){if(!ds)return '—';var p=ds.split('-');return p[1]+'/'+p[2]+'/'+p[0]}
+
+// ===== MEDICATIONS (25 from CFRC spreadsheet, Q1 2026 ASP) =====
+var MEDS=[
+{id:'m1',j:'J3262',b:'Actemra',g:'tocilizumab',route:'IV',unitDef:'1 unit = 1 mg',typUnits:400,asp:5.708,gpo:3.67},
+{id:'m2',j:'J0490',b:'Benlysta',g:'belimumab',route:'IV',unitDef:'1 unit = 10 mg',typUnits:52,asp:56.068,gpo:40.15},
+{id:'m3',j:'J0717',b:'Cimzia',g:'certolizumab pegol',route:'Injection',unitDef:'1 unit = 1 mg',typUnits:400,asp:3.913,gpo:0.03},
+{id:'m4',j:'J3247',b:'Cosentyx',g:'secukinumab',route:'IV',unitDef:'1 unit = 1 mg',typUnits:300,asp:17.843,gpo:14.3},
+{id:'m5',j:'J3111',b:'Evenity',g:'romosozumab',route:'Injection',unitDef:'1 unit = 1 mg',typUnits:210,asp:12.07,gpo:8.52},
+{id:'m6',j:'J0638',b:'Ilaris',g:'canakinumab',route:'Injection',unitDef:'1 unit = 1 mg',typUnits:150,asp:141.604,gpo:107.38},
+{id:'m7',j:'Q5103',b:'Inflectra',g:'infliximab-dyyb',route:'IV',unitDef:'1 unit = 10 mg',typUnits:30,asp:19.99,gpo:16.31},
+{id:'m8',j:'J1566',b:'IVIG',g:'immune globulin',route:'IV',unitDef:'1 unit = 500 mg',typUnits:80,asp:78.795,gpo:null},
+{id:'m9',j:'J1569',b:'Gammagard',g:'immune globulin',route:'IV',unitDef:'1 unit = 500 mg',typUnits:80,asp:45.314,gpo:null},
+{id:'m10',j:'Q5136',b:'Jubbonti',g:'denosumab-bbdz',route:'Injection',unitDef:'1 unit = 1 mg',typUnits:60,asp:29.38,gpo:10.37},
+{id:'m11',j:'J0129',b:'Orencia',g:'abatacept',route:'IV',unitDef:'1 unit = 10 mg',typUnits:75,asp:44.109,gpo:19.02},
+{id:'m12',j:'J0897',b:'Prolia',g:'denosumab',route:'Injection',unitDef:'1 unit = 1 mg',typUnits:60,asp:29.38,gpo:29.38},
+{id:'m13',j:'J3489',b:'Reclast',g:'zoledronic acid',route:'IV',unitDef:'1 unit = 1 mg',typUnits:5,asp:5.056,gpo:null},
+{id:'m14',j:'J1745',b:'Remicade',g:'infliximab',route:'IV',unitDef:'1 unit = 10 mg',typUnits:30,asp:31.09,gpo:21.29},
+{id:'m15',j:'Q5104',b:'Renflexis',g:'infliximab-abda',route:'IV',unitDef:'1 unit = 10 mg',typUnits:30,asp:26.999,gpo:19.18},
+{id:'m16',j:'J9312',b:'Rituxan',g:'rituximab',route:'IV',unitDef:'1 unit = 10 mg',typUnits:100,asp:75.22,gpo:45.7},
+{id:'m17',j:'Q5119',b:'Ruxience',g:'rituximab-pvvr',route:'IV',unitDef:'1 unit = 10 mg',typUnits:100,asp:27.845,gpo:6.21},
+{id:'m18',j:'Q5115',b:'Truxima',g:'rituximab-abbs',route:'IV',unitDef:'1 unit = 10 mg',typUnits:100,asp:29.379,gpo:17.5},
+{id:'m19',j:'J0491',b:'Saphnelo',g:'anifrolumab',route:'IV',unitDef:'1 unit = 1 mg',typUnits:300,asp:18.079,gpo:13.17},
+{id:'m20',j:'J1602',b:'Simponi Aria',g:'golimumab',route:'IV',unitDef:'1 unit = 1 mg',typUnits:150,asp:11.039,gpo:5.8},
+{id:'m21',j:'J2327',b:'Skyrizi (IV)',g:'risankizumab',route:'IV',unitDef:'1 unit = 1 mg',typUnits:600,asp:14.941,gpo:11.86},
+{id:'m22',j:'J2327',b:'Skyrizi UC',g:'risankizumab',route:'IV induction',unitDef:'1 unit = 1 mg',typUnits:1200,asp:14.941,gpo:11.86},
+{id:'m23',j:'J2919',b:'Solu-Medrol',g:'methylprednisolone',route:'IV',unitDef:'1 unit = 5 mg',typUnits:8,asp:0.21,gpo:null},
+{id:'m24',j:'J1885',b:'Toradol',g:'ketorolac',route:'Injection',unitDef:'1 unit = 15 mg',typUnits:2,asp:0.303,gpo:null},
+{id:'m25',j:'Q5135',b:'Tyenne',g:'tocilizumab-aazg',route:'IV',unitDef:'1 unit = 1 mg',typUnits:400,asp:4.415,gpo:2.88}
+];
+function GM(id){return MEDS.find(function(m){return m.id===id})}
+function GMj(j){return MEDS.filter(function(m){return m.j===j})}
+function aspRevenue(med,units){return Math.round(med.asp*(units||med.typUnits)*1.06*100)/100}
+function gpoCost(med,units){return med.gpo?Math.round(med.gpo*(units||med.typUnits)*100)/100:null}
+function Fmt(c){return '$'+Number(c).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}
+function FmtD(c){return '$'+Number(c).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+// ===== INSURANCE CATEGORIES & RULES =====
+var INS_TYPES=[
+  {id:'med_trad',label:'Medicare Traditional',short:'Medicare',group:'Medicare'},
+  {id:'ma_hmo',label:'Medicare Advantage HMO',short:'MA HMO',group:'Medicare'},
+  {id:'ma_ppo',label:'Medicare Advantage PPO',short:'MA PPO',group:'Medicare'},
+  {id:'comm_hmo',label:'Commercial HMO',short:'Comm HMO',group:'Commercial'},
+  {id:'comm_ppo',label:'Commercial PPO',short:'Comm PPO',group:'Commercial'},
+  {id:'mkt_hmo',label:'Marketplace HMO (ACA)',short:'ACA HMO',group:'Marketplace'},
+  {id:'mkt_ppo',label:'Marketplace PPO (ACA)',short:'ACA PPO',group:'Marketplace'},
+  {id:'va_tri',label:'VA / TRICARE',short:'VA/TRI',group:'Government'},
+  {id:'mgd_mcaid',label:'Managed Medicaid',short:'Mgd Mcaid',group:'Medicaid'}
+];
+// Rules: 'req'=always required, 'def'=default required (can override), 'no'=not required, 'na'=not applicable
+var INS_RULES={
+  med_trad:{referral:'no',visitAuth:'no',drugPA:'no',pcpPA:'na',graceChk:'no'},
+  ma_hmo:{referral:'req',visitAuth:'def',drugPA:'req',pcpPA:'def',graceChk:'no'},
+  ma_ppo:{referral:'no',visitAuth:'no',drugPA:'def',pcpPA:'no',graceChk:'no'},
+  comm_hmo:{referral:'req',visitAuth:'req',drugPA:'req',pcpPA:'def',graceChk:'no'},
+  comm_ppo:{referral:'no',visitAuth:'no',drugPA:'def',pcpPA:'no',graceChk:'no'},
+  mkt_hmo:{referral:'def',visitAuth:'def',drugPA:'def',pcpPA:'no',graceChk:'req'},
+  mkt_ppo:{referral:'def',visitAuth:'no',drugPA:'def',pcpPA:'no',graceChk:'req'},
+  va_tri:{referral:'def',visitAuth:'def',drugPA:'def',pcpPA:'no',graceChk:'no'},
+  mgd_mcaid:{referral:'req',visitAuth:'req',drugPA:'req',pcpPA:'def',graceChk:'no'}
+};
+function getInsType(id){return INS_TYPES.find(function(t){return t.id===id})}
+function getInsRules(insId){return INS_RULES[insId]||INS_RULES.comm_ppo}
+
+// ===== PASSWORD / FINANCE LOCK =====
+var FIN_HASH='5f138855832ecbe2ec83007342a525758840cc2d1dfcfad60dd461b455f0b414';
+function sha256(str){
+  var buf=new TextEncoder().encode(str);
+  return crypto.subtle.digest('SHA-256',buf).then(function(h){
+    return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+  });
+}
+
+// ===== LOCATIONS =====
+var DEF_LOCS=['Lake Mary','Orange City','Aziz Kissimmee','CFRC Kissimmee','Winter Garden'];
+
+// ===== WORKFLOW DEFINITIONS =====
+function getWF(type,insId,isNewPt){
+  var rules=getInsRules(insId||'comm_ppo');
+  var steps=[];
+  if(type==='New Patient'){
+    // CFRC policy: referral always required for new patients
+    steps.push({k:'referral',icon:'📋',l:'Referral on File',d:'PCP referral received and documented',status:'req'});
+    steps.push({k:'ins_ver',icon:'🪪',l:'Insurance Verified',d:'Eligibility confirmed via Availity',status:'req'});
+    if(rules.graceChk==='req')steps.push({k:'grace_chk',icon:'⚠️',l:'Grace Period Check',d:'ACA premium paid-through date verified',status:'req'});
+    steps.push({k:'ben_ver',icon:'📋',l:'Benefits Verified',d:'Coverage details confirmed',status:rules.visitAuth==='no'?'no':'def'});
+    if(rules.visitAuth!=='no')steps.push({k:'visit_auth',icon:'🔐',l:'Visit Auth Obtained',d:'Authorization for office visit',status:rules.visitAuth});
+    steps.push({k:'ready',icon:'🟢',l:'Ready for Visit',d:'All clear for appointment',status:'auto'});
+  } else if(type==='Existing Patient'){
+    steps.push({k:'ins_ver',icon:'🪪',l:'Insurance Verified',d:'Eligibility confirmed via Availity',status:'req'});
+    if(rules.graceChk==='req')steps.push({k:'grace_chk',icon:'⚠️',l:'Grace Period Check',d:'ACA premium paid-through date verified',status:'req'});
+    if(rules.visitAuth!=='no')steps.push({k:'visit_auth',icon:'🔐',l:'Visit Auth Obtained',d:'Authorization for office visit',status:rules.visitAuth});
+    steps.push({k:'auth_rev',icon:'📝',l:'Auth Issues Reviewed',d:'Check for upcoming auth needs',status:'def'});
+    steps.push({k:'ready',icon:'🟢',l:'Ready for Visit',d:'All clear for appointment',status:'auto'});
+  } else { // Infusion
+    steps.push({k:'ins_ver',icon:'🪪',l:'Insurance Verified',d:'Eligibility confirmed via Availity',status:'req'});
+    if(rules.graceChk==='req')steps.push({k:'grace_chk',icon:'⚠️',l:'Grace Period Check',d:'ACA premium paid-through date verified',status:'req'});
+    steps.push({k:'auth_ok',icon:'✅',l:'Auth Verified Active',d:'PA on file, approved, covers date',status:rules.drugPA});
+    steps.push({k:'units_ok',icon:'🔢',l:'Units/Qty Sufficient',d:'Enough units remain on auth',status:rules.drugPA==='no'?'no':'req'});
+    steps.push({k:'exp_ok',icon:'📆',l:'Expiration Covers Date',d:'Auth not expired for infusion date',status:rules.drugPA==='no'?'no':'req'});
+    steps.push({k:'drug',icon:'💉',l:'Drug Order Status',d:'B&B ordered or SPP received',status:'req'});
+    steps.push({k:'ready',icon:'🟢',l:'Ready for Infusion',d:'All clear',status:'auto'});
+  }
+  return steps;
+}
+
+// ===== AUTH STATUS HELPERS =====
+function realAuthStatus(auth){
+  if(!auth)return 'none';
+  if(auth.status==='denied')return 'denied';
+  if(auth.status==='appeal')return 'appeal';
+  // Infer from data: has auth number + dates = approved
+  if(auth.authNum&&auth.start&&auth.end){
+    if(dU(auth.end)<0)return 'expired';
+    return 'approved';
+  }
+  if(auth.authNum&&!auth.start)return 'approved';
+  if(auth.end&&dU(auth.end)<0)return 'expired';
+  return auth.status||'pending';
+}
+// Infer auth status from data rather than relying on manual status field
+function inferAuthStatus(ad){
+  if(!ad)return 'none';
+  // Explicit denied/appeal always respected
+  if(ad.status==='denied')return 'denied';
+  if(ad.status==='appeal')return 'appeal';
+  // Has auth number + dates = approved (check expiry separately)
+  if(ad.authNum&&ad.start&&ad.end){
+    if(dU(ad.end)<0)return 'expired';
+    return 'approved';
+  }
+  // Has auth number but no dates yet = partially entered, treat as approved
+  if(ad.authNum&&!ad.start)return 'approved';
+  // No auth number = still pending
+  return 'pending';
+}
+
+function hasValidAuth(auths,pid,med,apptDate){
+  return (auths||[]).filter(function(a){
+    return a.pid===pid&&a.med===med&&realAuthStatus(a)==='approved'&&a.start<=apptDate&&a.end>=apptDate;
+  });
+}
+
+// ===== DEMO DATA =====
+function makeDemoData(){
+  var pts=[
+    {id:'p1',first:'Margaret',last:'Wilson',mrn:'MRN-10001',dob:'1958-03-15',ins:'UnitedHealthcare',insType:'ma_hmo',planType:'HMO',verified:'done',pcp:'Dr. James Miller',pcpPhone:'407-555-0101',
+     referral:{received:true,provider:'Dr. James Miller',date:d(-30),number:'REF-2026-4421',expires:d(60),visits:null}},
+    {id:'p2',first:'Robert',last:'Chen',mrn:'MRN-10002',dob:'1962-07-22',ins:'Aetna',insType:'comm_ppo',planType:'PPO',verified:'done',pcp:'Dr. Sarah Kim',pcpPhone:'407-555-0202',
+     referral:{received:true,provider:'Dr. Sarah Kim',date:d(-45),number:'REF-2026-3312',expires:null,visits:null}},
+    {id:'p3',first:'Patricia',last:'Davis',mrn:'MRN-10003',dob:'1965-11-30',ins:'Blue Cross',insType:'comm_ppo',planType:'PPO',verified:'done',pcp:'Dr. Alan Brooks',pcpPhone:'407-555-0303',
+     referral:{received:true,provider:'Dr. Alan Brooks',date:d(-60),number:'REF-2025-8891',expires:null,visits:null}},
+    {id:'p4',first:'James',last:'Garcia',mrn:'MRN-10004',dob:'1971-01-18',ins:'Humana',insType:'ma_ppo',planType:'PPO',verified:'done',pcp:'Dr. Lisa Patel',pcpPhone:'407-555-0404',
+     referral:{received:true,provider:'Dr. Lisa Patel',date:d(-20),number:'REF-2026-5567',expires:d(70),visits:null}},
+    {id:'p5',first:'Dorothy',last:'Martinez',mrn:'MRN-10005',dob:'1955-09-08',ins:'Cigna',insType:'comm_hmo',planType:'HMO',verified:'done',pcp:'Dr. Mark Rivera',pcpPhone:'407-555-0505',
+     referral:{received:true,provider:'Dr. Mark Rivera',date:d(-90),number:'REF-2025-7712',expires:d(-5),visits:10}},
+    {id:'p6',first:'William',last:'Johnson',mrn:'MRN-10006',dob:'1968-04-25',ins:'Ambetter',insType:'mkt_hmo',planType:'HMO',verified:'',pcp:'',pcpPhone:'',
+     referral:{received:false,provider:'',date:'',number:'',expires:'',visits:null},
+     gracePeriod:{paidThrough:d(-35),verifiedDate:d(0)}},
+    {id:'p7',first:'Barbara',last:'Lee',mrn:'MRN-10007',dob:'1973-12-10',ins:'Florida Blue',insType:'comm_hmo',planType:'HMO',verified:'done',pcp:'Dr. Nancy Chen',pcpPhone:'407-555-0707',
+     referral:{received:false,provider:'',date:'',number:'',expires:'',visits:null}},
+    {id:'p8',first:'Thomas',last:'Wright',mrn:'MRN-10008',dob:'1960-06-14',ins:'Medicare',insType:'med_trad',planType:'Medicare',verified:'done',pcp:'Dr. Robert Adams',pcpPhone:'407-555-0808',
+     referral:{received:true,provider:'Dr. Robert Adams',date:d(-10),number:'',expires:'',visits:null}}
+  ];
+  var ap=[
+    // Margaret Wilson - MA HMO - Remicade tomorrow, drug not ordered
+    {id:'a1',pid:'p1',type:'Infusion',med:'m14',date:d(1),loc:'Orange City',disp:'bb',
+     wf:{ins_ver:'done',grace_chk:'na',auth_ok:'done',units_ok:'done',exp_ok:'done',drug:'',ready:''},
+     authData:{authNum:'PA-2026-88431',start:d(-90),end:d(20),approvedUnits:2400,usedUnits:1920,payer:'UnitedHealthcare',paSubmitter:'specialist'}},
+    // Margaret Wilson - second infusion
+    {id:'a2',pid:'p1',type:'Infusion',med:'m14',date:d(10),loc:'Orange City',disp:'bb',
+     wf:{ins_ver:'done',grace_chk:'na',auth_ok:'done',units_ok:'',exp_ok:'',drug:'',ready:''},
+     authData:{authNum:'PA-2026-88431',start:d(-90),end:d(20),approvedUnits:2400,usedUnits:1920,payer:'UnitedHealthcare',paSubmitter:'specialist'}},
+    // Robert Chen - Comm PPO - Actemra in 5 days
+    {id:'a3',pid:'p2',type:'Infusion',med:'m1',date:d(5),loc:'Lake Mary',disp:'bb',
+     wf:{ins_ver:'done',auth_ok:'done',units_ok:'done',exp_ok:'done',drug:'done',ready:''},
+     authData:{authNum:'PA-2026-71205',start:d(-60),end:d(120),approvedUnits:4800,usedUnits:1600,payer:'Aetna',paSubmitter:'specialist'}},
+    // Patricia Davis - Comm PPO - Rituxan in 9 days, auth PENDING
+    {id:'a4',pid:'p3',type:'Infusion',med:'m16',date:d(9),loc:'CFRC Kissimmee',disp:'spp',
+     wf:{ins_ver:'done',auth_ok:'',units_ok:'',exp_ok:'',drug:'',ready:''},
+     authData:{authNum:'',start:'',end:'',approvedUnits:0,usedUnits:0,payer:'Blue Cross',paSubmitter:'specialist',status:'pending'}},
+    // Dorothy Martinez - Comm HMO - Stelara TODAY, auth EXPIRED
+    {id:'a5',pid:'p5',type:'Infusion',med:'m4',date:d(0),loc:'Winter Garden',disp:'bb',
+     wf:{ins_ver:'done',auth_ok:'done',units_ok:'done',exp_ok:'done',drug:'done',ready:'done'},
+     authData:{authNum:'PA-2025-55102',start:d(-180),end:d(-5),approvedUnits:3600,usedUnits:3000,payer:'Cigna',paSubmitter:'specialist'}},
+    // William Johnson - ACA/Marketplace - NEW PATIENT in 2 days, no referral, grace period issue
+    {id:'a6',pid:'p6',type:'New Patient',med:'',date:d(2),loc:'Orange City',disp:'',
+     wf:{referral:'',ins_ver:'',grace_chk:'',ben_ver:'',ready:''},
+     authData:null},
+    // Barbara Lee - Comm HMO - NEW PATIENT in 5 days, no referral yet
+    {id:'a7',pid:'p7',type:'New Patient',med:'',date:d(5),loc:'Lake Mary',disp:'',
+     wf:{referral:'',ins_ver:'done',ben_ver:'',visit_auth:'',ready:''},
+     authData:null},
+    // James Garcia - MA PPO - Orencia in 7 days, PCP must submit PA
+    {id:'a8',pid:'p4',type:'Infusion',med:'m11',date:d(7),loc:'Aziz Kissimmee',disp:'bb',
+     wf:{ins_ver:'done',auth_ok:'',units_ok:'',exp_ok:'',drug:'',ready:''},
+     authData:{authNum:'',start:'',end:'',approvedUnits:0,usedUnits:0,payer:'Humana',paSubmitter:'pcp',pcpNotified:d(-3),pcpConfirmed:'',status:'pending'}},
+    // Thomas Wright - Medicare Traditional - Infusion in 3 days (minimal requirements)
+    {id:'a9',pid:'p8',type:'Infusion',med:'m13',date:d(3),loc:'Orange City',disp:'bb',
+     wf:{ins_ver:'done',auth_ok:'na',units_ok:'na',exp_ok:'na',drug:'done',ready:''},
+     authData:null}
+  ];
+  var au=[
+    {id:'au1',pid:'p1',med:'m14',payer:'UnitedHealthcare',status:'approved',authNum:'PA-2026-88431',start:d(-90),end:d(20),approvedUnits:2400,usedUnits:1920,paSubmitter:'specialist'},
+    {id:'au2',pid:'p2',med:'m1',payer:'Aetna',status:'approved',authNum:'PA-2026-71205',start:d(-60),end:d(120),approvedUnits:4800,usedUnits:1600,paSubmitter:'specialist'},
+    {id:'au3',pid:'p3',med:'m16',payer:'Blue Cross',status:'pending',authNum:'',start:'',end:'',approvedUnits:0,usedUnits:0,paSubmitter:'specialist'},
+    {id:'au4',pid:'p5',med:'m4',payer:'Cigna',status:'approved',authNum:'PA-2025-55102',start:d(-180),end:d(-5),approvedUnits:3600,usedUnits:3000,paSubmitter:'specialist'},
+    {id:'au5',pid:'p4',med:'m11',payer:'Humana',status:'pending',authNum:'',start:'',end:'',approvedUnits:0,usedUnits:0,paSubmitter:'pcp',pcpNotified:d(-3),pcpConfirmed:''}
+  ];
+  return {pts:pts,ap:ap,au:au};
+}
+
+// ===== BADGE COMPONENT =====
+function Bg(props){return h('span',{className:'bg',style:{background:props.bg,color:props.c}},props.children)}
+
+// ===== EDITABLE FIELD COMPONENT =====
+function EditField(props){
+  var _s=useState(false),editing=_s[0],setEditing=_s[1];
+  var _v=useState(props.value||''),val=_v[0],setVal=_v[1];
+  useEffect(function(){setVal(props.value||'')},[props.value]);
+  if(editing){
+    var inputType=props.type||'text';
+    if(inputType==='select'){
+      return h('select',{value:val,autoFocus:true,style:{fontSize:11},onChange:function(e){setVal(e.target.value)},
+        onBlur:function(){setEditing(false);if(props.onChange)props.onChange(val)}},
+        h('option',{value:''},'— Select —'),
+        (props.options||[]).map(function(o){return h('option',{key:o.value||o,value:o.value||o},o.label||o)})
+      );
+    }
+    return h('input',{type:inputType,value:val,autoFocus:true,style:{fontSize:11,width:props.width||'100%'},
+      onChange:function(e){setVal(e.target.value)},
+      onBlur:function(){setEditing(false);if(props.onChange)props.onChange(val)},
+      onKeyDown:function(e){if(e.key==='Enter'){setEditing(false);if(props.onChange)props.onChange(val)}}
+    });
+  }
+  var isEmpty=!props.value&&props.value!==0;
+  return h('span',{className:'editable'+(isEmpty?' empty':''),onClick:function(){setEditing(true)},
+    title:'Click to edit'},isEmpty?(props.placeholder||'Click to enter'):props.display||props.value);
+}
+
+// ===== CONFIRM POPUP FOR "NOT REQUIRED" OVERRIDE =====
+function ConfirmNotRequired(props){
+  return h('div',{className:'mo',onClick:props.onCancel},
+    h('div',{className:'mo-c',onClick:function(e){e.stopPropagation()}},
+      h('h3',{style:{fontSize:14,marginBottom:8,color:'#b91c1c'}},'⚠️ Verify Authorization Not Required'),
+      h('p',{style:{fontSize:11,marginBottom:10,lineHeight:1.5}},
+        'You are marking ',h('strong',null,props.stepName),' as ',h('strong',null,'Not Required'),' for this ',
+        h('strong',null,props.planType),' patient.'),
+      h('p',{style:{fontSize:11,marginBottom:10,lineHeight:1.5,color:'#b91c1c',fontWeight:600}},
+        'Please confirm you have verified with the payer that no authorization is needed for this service. This action will be logged.'),
+      h('div',{className:'fc',style:{gap:8,justifyContent:'flex-end'}},
+        h('button',{className:'btn bw',onClick:props.onCancel},'Cancel'),
+        h('button',{className:'btn ber',onClick:props.onConfirm},'Confirm — Verified Not Required')
+      )
+    )
+  );
+}
+
+// ===== GRACE PERIOD CALCULATOR =====
+function graceStatus(paidThrough,apptDate){
+  if(!paidThrough)return {level:'unknown',days:0,msg:'Paid-through date not entered'};
+  var daysPast=dU(paidThrough)*-1; // days PAST the paid-through date
+  if(daysPast<=0)return {level:'ok',days:0,msg:'Premium current — within paid period'};
+  if(daysPast<=30)return {level:'ok',days:daysPast,msg:'Within 30-day safe window (Day '+daysPast+' of grace period). Payer obligated to pay claims.'};
+  if(daysPast<=60)return {level:'high',days:daysPast,msg:'HIGH RISK — Day '+daysPast+' of grace period. Plan may deny ALL claims. Do NOT proceed with infusion without verifying premium payment.'};
+  if(daysPast<=90)return {level:'critical',days:daysPast,msg:'CRITICAL — Day '+daysPast+' of grace period. Plan will almost certainly deny. Require proof of premium payment or convert to self-pay.'};
+  return {level:'terminated',days:daysPast,msg:'TERMINATED — '+daysPast+' days past paid date. Plan will be terminated. Self-pay or assist with re-enrollment.'};
+}
+
+// ===== SIDEBAR COMPONENT =====
+function Sidebar(props){
+  var nb=function(icon,label,pg,ct){
+    return h('button',{key:pg,className:'nb'+(props.pg===pg?' on':''),onClick:function(){props.setPg(pg)}},
+      h('i',null,icon),label,ct>0&&h('span',{className:'ct'},ct));
+  };
+  return h('div',{className:'sb'},
+    h('div',{className:'sb-hd'},h('h1',null,'PA Tracker'),h('p',null,'CFRC Rheumatology • v3')),
+    h('div',{className:'sb-nav'},
+      h('div',{className:'sb-sec'},'DAILY OPS'),
+      nb('📊','Dashboard','dash',0),
+      nb('📋','Worklist','wl',props.counts.incomplete),
+      nb('💊','Drug Orders','dr',props.counts.needOrder),
+      h('div',{className:'sb-sec'},'TRACKING'),
+      nb('🔐','Auth Tracker','auth',props.counts.pendingAuth),
+      nb('📁','Patient List','pts',0),
+      h('div',{className:'sb-sec'},'DATA'),
+      nb('📤','Upload Schedule','up',0),
+      nb('⚙️','Settings','se',0),
+      h('div',{style:{marginTop:8}}),
+      h('button',{className:'lock-btn'+(props.finUnlocked?' unlocked':''),onClick:props.onFinToggle},
+        props.finUnlocked?'🔓 Finance View':'🔒 Finance View')
+    ),
+    h('div',{className:'sb-ft'},'Build A+B • Feb 2026')
+  );
+}
+
+// ===== SEARCH BAR COMPONENT =====
+
+// Calculate workflow completion accounting for auto-ready step
+function wfCompletion(wfSteps,wf){
+  var nonAuto=wfSteps.filter(function(s){return s.status!=='auto'});
+  var nonAutoDone=nonAuto.filter(function(s){var v=wf[s.k]||'';return v==='done'||v==='na'}).length;
+  var allNonAutoDone=nonAutoDone===nonAuto.length;
+  // Ready step counts as done if all others are done
+  var total=wfSteps.length;
+  var done=nonAutoDone+(allNonAutoDone?1:0);
+  return {done:done,total:total,pct:Math.round(done/total*100),complete:done===total};
+}
+
+// Smart appointment date display
+function apptDateLabel(appts,pid){
+  var ptAp=(appts||[]).filter(function(a){return a.pid===pid}).sort(function(a,b){
+    return new Date(a.date)-new Date(b.date);
+  });
+  if(ptAp.length===0)return {text:'No appointments',color:'#94a3b8',icon:''};
+  var future=ptAp.filter(function(a){return dU(a.date)>=0});
+  var past=ptAp.filter(function(a){return dU(a.date)<0});
+  if(future.length>0){
+    var next=future[0];var du=dU(next.date);
+    if(du===0)return {text:'Today',sub:fD(next.date),color:'#1e40af',icon:'📍'};
+    if(du===1)return {text:'Tomorrow',sub:fD(next.date),color:'#1e40af',icon:'⚡'};
+    if(du<=7)return {text:'In '+du+'d',sub:fD(next.date),color:du<=2?'#b91c1c':'#a16207',icon:'📅'};
+    return {text:fD(next.date),sub:'In '+du+'d',color:'#047857',icon:'📅'};
+  }
+  // Only past appointments
+  var last=past[past.length-1];var daysPast=dU(last.date)*-1;
+  return {text:'Last: '+fD(last.date),sub:daysPast+'d ago',color:'#94a3b8',icon:'📋'};
+}
+
+function SearchBar(props){
+  return h('div',{style:{marginBottom:10,position:'relative'}},
+    h('input',{type:'text',value:props.value,placeholder:props.placeholder||'Search by name or MRN...',
+      style:{width:'100%',padding:'6px 10px 6px 28px',fontSize:11,border:'1px solid #d1d5db',borderRadius:8},
+      onChange:function(e){props.onChange(e.target.value)}}),
+    h('span',{style:{position:'absolute',left:9,top:7,fontSize:13,opacity:.4}},'🔍'),
+    props.value&&h('button',{style:{position:'absolute',right:6,top:4,background:'none',border:'none',cursor:'pointer',fontSize:12,opacity:.5},
+      onClick:function(){props.onChange('')}},'✕')
+  );
+}
+
+// ===== STAT CARD =====
+function StatCard(props){
+  return h('div',{className:'sc cd',style:{borderLeft:'3px solid '+(props.color||'#1e40af')},onClick:props.onClick},
+    h('div',{className:'sc-l'},props.label),
+    h('div',{className:'sc-n',style:{color:props.color||'#1e40af'}},props.value),
+    props.sub&&h('div',{className:'mu',style:{fontSize:8,marginTop:2}},props.sub)
+  );
+}
+
+// ===== PATIENT DETAIL WITH EDITABLE FIELDS =====
+function PatientDetail(props){
+  var ap=props.ap,pt=props.pt,auths=props.auths,finUnlocked=props.finUnlocked;
+  var med=ap.med?GM(ap.med):null;
+  var rules=getInsRules(pt.insType||'comm_ppo');
+  var insLabel=(getInsType(pt.insType)||{}).label||'Unknown';
+  var wfSteps=getWF(ap.type,pt.insType,ap.type==='New Patient');
+  
+  // Confirm popup state
+  var _cp=useState(null),confirmPopup=_cp[0],setConfirmPopup=_cp[1];
+  
+  // Auth alert logic
+  var authAlert=null;
+  if(ap.type==='Infusion'&&ap.med){
+    var medObj=GM(ap.med);
+    var medAuths=(auths||[]).filter(function(a){return a.pid===ap.pid&&a.med===ap.med});
+    if(medAuths.length===0&&rules.drugPA!=='no'){
+      authAlert=h('div',{className:'al alr'},'❌ NO AUTH ON FILE — No authorization found for '+(medObj?medObj.b:'this drug')+'. Submit prior authorization before scheduling infusion.');
+    } else {
+      var va=hasValidAuth(auths,ap.pid,ap.med,ap.date);
+      if(va.length===0&&medAuths.length>0){
+        var denied=medAuths.filter(function(a){return inferAuthStatus(a)==='denied'});
+        var pending=medAuths.filter(function(a){var s=inferAuthStatus(a);return s==='pending'});
+        var expired=medAuths.filter(function(a){return inferAuthStatus(a)==='expired'});
+        var approved=medAuths.filter(function(a){return inferAuthStatus(a)==='approved'});
+        if(denied.length>0) authAlert=h('div',{className:'al alr'},'❌ AUTH DENIED — '+(medObj?medObj.b:'')+' authorization denied by '+(denied[0].payer||'payer')+'. Appeal or alternative action needed.');
+        else if(pending.length>0) authAlert=h('div',{className:'al alw'},'⏳ AUTH PENDING — '+(medObj?medObj.b:'')+' authorization is pending with '+(pending[0].payer||'payer')+'. Cannot infuse until approved.');
+        else if(expired.length>0) authAlert=h('div',{className:'al alr'},'⛔ AUTH EXPIRED — '+(medObj?medObj.b:'')+' auth expired '+fD(expired[0].end)+'. Reauthorization required before infusion.');
+        else if(approved.length>0) authAlert=h('div',{className:'al alw'},'⚠️ DATE NOT COVERED — '+(medObj?medObj.b:'')+' auth active '+fD(approved[0].start)+' to '+fD(approved[0].end)+' but does not cover infusion date '+fD(ap.date)+'.');
+      }
+    }
+  }
+  
+  // Referral alert for new patients
+  var refAlert=null;
+  if(ap.type==='New Patient'&&(!pt.referral||!pt.referral.received)){
+    var du=dU(ap.date);
+    if(du<=1) refAlert=h('div',{className:'al alr'},'🔴 CANNOT SEE PATIENT — No referral on file. Contact PCP office to obtain referral or reschedule appointment.');
+    else if(du<=3) refAlert=h('div',{className:'al alr'},'🔴 URGENT — No referral on file. Appointment in '+du+' days. Contact PCP office to obtain referral immediately.');
+    else refAlert=h('div',{className:'al alw'},'⚠️ No referral on file — Appointment in '+du+' days. Contact PCP office to obtain referral.');
+  }
+  // Referral expiring
+  if(pt.referral&&pt.referral.received&&pt.referral.expires&&dU(pt.referral.expires)<=14&&dU(pt.referral.expires)>=0){
+    refAlert=h('div',{className:'al alw'},'📋 Referral expires '+fD(pt.referral.expires)+' ('+dU(pt.referral.expires)+' days). Request new referral from PCP.');
+  }
+  if(pt.referral&&pt.referral.received&&pt.referral.expires&&dU(pt.referral.expires)<0){
+    refAlert=h('div',{className:'al alr'},'⛔ REFERRAL EXPIRED — Expired '+fD(pt.referral.expires)+'. Contact PCP office for new referral.');
+  }
+  
+  // Grace period alert
+  var graceAlert=null;
+  if(rules.graceChk==='req'&&pt.gracePeriod&&pt.gracePeriod.paidThrough){
+    var gs=graceStatus(pt.gracePeriod.paidThrough,ap.date);
+    if(gs.level==='high') graceAlert=h('div',{className:'al alr'},'🔴 GRACE PERIOD — '+gs.msg);
+    else if(gs.level==='critical') graceAlert=h('div',{className:'al alr'},'🔴 '+gs.msg);
+    else if(gs.level==='terminated') graceAlert=h('div',{className:'al alr'},'⛔ '+gs.msg);
+    else if(gs.level==='ok'&&gs.days>0) graceAlert=h('div',{className:'al alw'},'⚠️ '+gs.msg);
+  }
+  
+  // PCP PA tracking alert
+  var pcpAlert=null;
+  if(ap.authData&&ap.authData.paSubmitter==='pcp'){
+    if(!ap.authData.pcpNotified) pcpAlert=h('div',{className:'al alw'},'📞 PCP must submit PA — PCP has NOT been notified yet. Contact PCP office.');
+    else if(!ap.authData.pcpConfirmed) pcpAlert=h('div',{className:'al alw'},'⏳ PCP notified '+fD(ap.authData.pcpNotified)+' — Awaiting PCP confirmation of PA submission.');
+    else if(inferAuthStatus(ap.authData)==='pending') pcpAlert=h('div',{className:'al alb'},'📋 PCP confirmed submission '+fD(ap.authData.pcpConfirmed)+' — PA pending with '+(ap.authData.payer||'payer')+'.');
+  }
+
+  // Workflow step click handler
+  var handleStepClick=function(step){
+    var currentVal=ap.wf[step.k]||'';
+    if(currentVal==='done'){
+      // Undo
+      props.onUpdateWf(step.k,'');
+    } else if(currentVal==='na'){
+      // Already NA, do nothing
+    } else if(step.status==='def'&&currentVal!=='done'){
+      // Default-to-required: offer "Mark Done" or "Not Required" 
+      props.onUpdateWf(step.k,'done');
+    } else {
+      props.onUpdateWf(step.k,'done');
+    }
+  };
+  
+  var handleMarkNA=function(step){
+    setConfirmPopup({step:step,planType:insLabel});
+  };
+
+  // Calculate completion
+  var comp=wfCompletion(wfSteps,ap.wf);
+  var pct=comp.pct;
+
+  return h('div',null,
+    confirmPopup&&h(ConfirmNotRequired,{
+      stepName:confirmPopup.step.l,planType:confirmPopup.planType,
+      onCancel:function(){setConfirmPopup(null)},
+      onConfirm:function(){props.onUpdateWf(confirmPopup.step.k,'na');setConfirmPopup(null)}
+    }),
+    h('div',{className:'bk',onClick:props.onBack},'← Back to list'),
+    // Alerts
+    authAlert,refAlert,graceAlert,pcpAlert,
+    // Header
+    h('div',{className:'cd mb'},
+      h('div',{className:'cd-h fb'},
+        h('div',null,
+          h('h3',{style:{fontSize:15}},pt.last+', '+pt.first),
+          h('div',{className:'mu'},pt.mrn+' • '+ap.type+' • '+ap.loc+' • '+fD(ap.date)+' ('+
+            (dU(ap.date)===0?'Today':dU(ap.date)===1?'Tomorrow':dU(ap.date)+'d')+')')
+        ),
+        h('div',{className:'fc',style:{gap:8}},
+          h('div',{className:'bg',style:{background:pct===100?'#d1fae5':pct>=50?'#fef08a':'#fecaca',color:pct===100?'#047857':pct>=50?'#a16207':'#b91c1c'}},pct+'% Complete'),
+          h('div',{className:'bg',style:{background:'#dbeafe',color:'#1e40af'}},insLabel)
+        )
+      )
+    ),
+    // Two-column layout: workflow left, data entry right
+    h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}},
+      // LEFT: Guided Workflow
+      h('div',null,
+        h('div',{className:'stl'},'Guided Workflow — Click each step'),
+        h('div',{className:'wf'},wfSteps.map(function(step){
+          var val=ap.wf[step.k]||'';
+          var isDone=val==='done';
+          var isNA=val==='na';
+          // Auto-complete logic for 'ready' step
+          var isAuto=step.status==='auto';
+          if(isAuto){
+            var otherSteps=wfSteps.filter(function(s){return s.status!=='auto'});
+            var allOtherDone=otherSteps.every(function(s){var v=ap.wf[s.k]||'';return v==='done'||v==='na'});
+            isDone=allOtherDone;
+            isNA=false;
+          }
+          var cls='ws'+(isDone?' done':isNA?' na':dU(ap.date)<=2&&!isDone&&!isNA?' overdue':!isDone&&!isNA?' active':'');
+          return h('div',{key:step.k,className:cls},
+            h('div',{className:'ws-i'},isDone?'✅':isNA?'⬜':step.icon),
+            h('div',{className:'ws-b'},
+              h('div',{className:'ws-l'},step.l),
+              h('div',{className:'ws-d'},isAuto?(isDone?'✓ All steps complete — cleared to proceed':'Waiting on incomplete steps above'):isNA?'Verified Not Required — '+insLabel:isDone?'Complete':step.d)
+            ),
+            isAuto?null:
+            h('div',{className:'fc',style:{gap:4}},
+              isDone?h('button',{className:'btn bw bsm',onClick:function(){handleStepClick(step)}},'↩ Undo'):null,
+              !isDone&&!isNA?h('button',{className:'btn bok bsm',onClick:function(){handleStepClick(step)}},'Mark Done'):null,
+              !isDone&&!isNA&&(step.status==='def')?h('button',{className:'btn bw bsm',style:{fontSize:8},onClick:function(){handleMarkNA(step)}},'Not Req'):null
+            )
+          );
+        }))
+      ),
+      // RIGHT: Data Entry Panels
+      h('div',null,
+        // Patient Info Panel
+        h('div',{className:'panel'},
+          h('div',{className:'panel-h'},'👤 Patient Information',
+            pt.editedFields&&pt.editedFields.length>0?h('span',{style:{fontSize:8,color:'#7c3aed',marginLeft:6,fontWeight:400}},'✏️ '+pt.editedFields.length+' field(s) manually edited'):null),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Name'),h('span',{className:'form-val fw'},pt.first+' '+pt.last)),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'MRN'),h('span',{className:'form-val mono'},pt.mrn)),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'DOB'),h('span',{className:'form-val'},fD(pt.dob))),
+          h('div',{className:'form-row'},
+            h('span',{className:'form-label'},pt.editedFields&&pt.editedFields.indexOf('ins')>=0?'Insurance ✏️':'Insurance'),
+            h('span',{className:'form-val'},
+              h(EditField,{value:pt.ins,placeholder:'Click to enter insurance payer',onChange:function(v){props.onUpdatePt('ins',v);props.onMarkEdited('ins')}})
+          )),
+          h('div',{className:'form-row'},
+            h('span',{className:'form-label'},pt.editedFields&&pt.editedFields.indexOf('insType')>=0?'Plan Type ✏️':'Plan Type'),
+            h('span',{className:'form-val'},
+              h(EditField,{value:pt.insType,type:'select',placeholder:'Select plan type',
+                display:insLabel,
+                options:INS_TYPES.map(function(t){return {value:t.id,label:t.label}}),
+                onChange:function(v){props.onUpdatePt('insType',v);props.onMarkEdited('insType')}})
+          )),
+          h('div',{className:'form-row'},
+            h('span',{className:'form-label'},pt.editedFields&&pt.editedFields.indexOf('pcp')>=0?'PCP ✏️':'PCP'),
+            h('span',{className:'form-val'},
+              h(EditField,{value:pt.pcp,placeholder:'Click to enter PCP name',onChange:function(v){props.onUpdatePt('pcp',v);props.onMarkEdited('pcp')}})
+          )),
+          h('div',{className:'form-row'},
+            h('span',{className:'form-label'},pt.editedFields&&pt.editedFields.indexOf('pcpPhone')>=0?'PCP Phone ✏️':'PCP Phone'),
+            h('span',{className:'form-val'},
+              h(EditField,{value:pt.pcpPhone,placeholder:'Click to enter',onChange:function(v){props.onUpdatePt('pcpPhone',v);props.onMarkEdited('pcpPhone')}})
+          ))
+        ),
+        // Referral Panel (New Patients or if referral exists)
+        (ap.type==='New Patient'||pt.referral)&&h('div',{className:'panel'},
+          h('div',{className:'panel-h'},'📋 Referral Information'),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Status'),
+            h('span',{className:'form-val'},pt.referral&&pt.referral.received?
+              h('span',{className:'bg',style:{background:'#d1fae5',color:'#047857'}},'✓ On File'):
+              h('span',{className:'bg',style:{background:'#fecaca',color:'#b91c1c'}},'Not Received'))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Referring MD'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.referral?pt.referral.provider:'',placeholder:'Click to enter referring provider',
+              onChange:function(v){props.onUpdateRef('provider',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Referral Date'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.referral?pt.referral.date:'',type:'date',placeholder:'Click to enter',
+              onChange:function(v){props.onUpdateRef('date',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Referral #'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.referral?pt.referral.number:'',placeholder:'Click to enter ref number',
+              onChange:function(v){props.onUpdateRef('number',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Expires'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.referral?pt.referral.expires:'',type:'date',placeholder:'Click to enter',
+              onChange:function(v){props.onUpdateRef('expires',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Auth Visits'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.referral&&pt.referral.visits?String(pt.referral.visits):'',type:'number',placeholder:'# of visits authorized',
+              onChange:function(v){props.onUpdateRef('visits',v?parseInt(v):null)}})))
+        ),
+        // Authorization Panel (Infusions)
+        ap.type==='Infusion'&&h('div',{className:'panel'},
+          h('div',{className:'panel-h'},'🔐 Authorization Details'),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'PA Status'),
+            h('span',{className:'form-val'},(function(){
+              var st=ap.authData?inferAuthStatus(ap.authData):'none';
+              var bgC=st==='approved'?'#d1fae5':st==='expired'?'#fecaca':st==='denied'?'#fecaca':st==='none'?'#f1f5f9':'#fef08a';
+              var txC=st==='approved'?'#047857':st==='expired'||st==='denied'?'#b91c1c':st==='none'?'#64748b':'#a16207';
+              return h('span',{className:'bg',style:{background:bgC,color:txC}},st.toUpperCase());
+            })())),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Auth Number'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData?ap.authData.authNum:'',placeholder:'Click to enter PA number',
+              onChange:function(v){props.onUpdateAuth('authNum',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Payer'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData?ap.authData.payer:'',placeholder:'Click to enter payer',
+              onChange:function(v){props.onUpdateAuth('payer',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Start Date'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData?ap.authData.start:'',type:'date',placeholder:'Auth start date',
+              onChange:function(v){props.onUpdateAuth('start',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Expiry Date'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData?ap.authData.end:'',type:'date',placeholder:'Auth expiration date',
+              onChange:function(v){props.onUpdateAuth('end',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Approved Units'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData&&ap.authData.approvedUnits?String(ap.authData.approvedUnits):'',type:'number',placeholder:'Total approved units',
+              onChange:function(v){props.onUpdateAuth('approvedUnits',v?parseInt(v):0)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Used Units'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData&&ap.authData.usedUnits?String(ap.authData.usedUnits):'',type:'number',placeholder:'Units used to date',
+              onChange:function(v){props.onUpdateAuth('usedUnits',v?parseInt(v):0)}}))),
+          ap.authData&&ap.authData.approvedUnits>0&&h('div',{className:'form-row'},h('span',{className:'form-label'},'Remaining'),
+            h('span',{className:'form-val fw',style:{color:((ap.authData.approvedUnits-ap.authData.usedUnits)/ap.authData.approvedUnits)<0.2?'#b91c1c':'#047857'}},
+              (ap.authData.approvedUnits-ap.authData.usedUnits)+' units ('+Math.round((1-ap.authData.usedUnits/ap.authData.approvedUnits)*100)+'% remaining)')),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'PA Submitter'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.authData?ap.authData.paSubmitter:'specialist',type:'select',
+              display:ap.authData&&ap.authData.paSubmitter==='pcp'?'PCP Office':'Our Office (Specialist)',
+              options:[{value:'specialist',label:'Our Office (Specialist)'},{value:'pcp',label:'PCP Office'}],
+              onChange:function(v){props.onUpdateAuth('paSubmitter',v)}}))),
+          // PCP PA tracking fields
+          ap.authData&&ap.authData.paSubmitter==='pcp'&&h('div',null,
+            h('div',{style:{borderTop:'1px solid #e2e8f0',marginTop:6,paddingTop:6}}),
+            h('div',{className:'form-row'},h('span',{className:'form-label',style:{color:'#7c3aed'}},'PCP Notified'),h('span',{className:'form-val'},
+              h(EditField,{value:ap.authData.pcpNotified||'',type:'date',placeholder:'Date PCP was notified',
+                onChange:function(v){props.onUpdateAuth('pcpNotified',v)}}))),
+            h('div',{className:'form-row'},h('span',{className:'form-label',style:{color:'#7c3aed'}},'PCP Confirmed'),h('span',{className:'form-val'},
+              h(EditField,{value:ap.authData.pcpConfirmed||'',type:'date',placeholder:'Date PCP confirmed submission',
+                onChange:function(v){props.onUpdateAuth('pcpConfirmed',v)}})))
+          )
+        ),
+        // Medication Panel (Infusions)
+        ap.type==='Infusion'&&h('div',{className:'panel'},
+          h('div',{className:'panel-h'},'💊 Medication'),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Medication'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.med||'',type:'select',placeholder:'Select medication',
+              display:med?(med.b+' ('+med.j+')'):'',
+              options:MEDS.map(function(m){return {value:m.id,label:m.b+' — '+m.j}}),
+              onChange:function(v){props.onUpdateAp('med',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Dispensing'),h('span',{className:'form-val'},
+            h(EditField,{value:ap.disp||'',type:'select',placeholder:'B&B or SPP',
+              display:ap.disp==='bb'?'Buy & Bill':ap.disp==='spp'?'SPP / White Bag':'',
+              options:[{value:'bb',label:'Buy & Bill'},{value:'spp',label:'SPP / White Bag'}],
+              onChange:function(v){props.onUpdateAp('disp',v)}}))),
+          med&&h('div',null,
+            h('div',{className:'form-row'},h('span',{className:'form-label'},'J-Code'),h('span',{className:'form-val mono'},med.j)),
+            h('div',{className:'form-row'},h('span',{className:'form-label'},'Typical Dose'),h('span',{className:'form-val'},med.typUnits+' units')),
+            h('div',{className:'form-row'},h('span',{className:'form-label'},'ASP+6% Rev'),h('span',{className:'form-val fw'},FmtD(aspRevenue(med)))),
+            finUnlocked&&med.gpo!==null&&h('div',null,
+              h('div',{className:'form-row'},h('span',{className:'form-label',style:{color:'#7c3aed'}},'GPO Cost'),h('span',{className:'form-val fw',style:{color:'#7c3aed'}},FmtD(gpoCost(med)))),
+              h('div',{className:'form-row'},h('span',{className:'form-label',style:{color:'#7c3aed'}},'Margin'),h('span',{className:'form-val fw',style:{color:'#047857'}},FmtD(aspRevenue(med)-gpoCost(med))))
+            )
+          )
+        ),
+        // Grace Period Panel (Marketplace only)
+        rules.graceChk==='req'&&h('div',{className:'panel',style:{borderColor:pt.gracePeriod&&pt.gracePeriod.paidThrough&&graceStatus(pt.gracePeriod.paidThrough).level!=='ok'?'#fecaca':'#e2e8f0'}},
+          h('div',{className:'panel-h',style:{color:'#b91c1c'}},'⚠️ ACA Grace Period Check'),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Paid Through'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.gracePeriod?pt.gracePeriod.paidThrough:'',type:'date',placeholder:'Enter last premium paid-through date from Availity',
+              onChange:function(v){props.onUpdateGrace('paidThrough',v)}}))),
+          h('div',{className:'form-row'},h('span',{className:'form-label'},'Verified On'),h('span',{className:'form-val'},
+            h(EditField,{value:pt.gracePeriod?pt.gracePeriod.verifiedDate:'',type:'date',placeholder:'Date verified',
+              onChange:function(v){props.onUpdateGrace('verifiedDate',v)}})))
+        )
+      )
+    )
+  );
+}
+
+// ===== MAIN APP =====
+function App(){
+  var demo=useMemo(function(){return makeDemoData()},[]);
+  var _pg=useState('dash'),pg=_pg[0],setPg=_pg[1];
+  var _pts=useState(function(){return LS.g('pts',demo.pts)}),pts=_pts[0],setPts=_pts[1];
+  var _ap=useState(function(){return LS.g('ap',demo.ap)}),appts=_ap[0],setAppts=_ap[1];
+  var _au=useState(function(){return LS.g('au',demo.au)}),auths=_au[0],setAuths=_au[1];
+  var _sel=useState(null),selAp=_sel[0],setSelAp=_sel[1];
+  var _fin=useState(false),finUnlocked=_fin[0],setFinUnlocked=_fin[1];
+  var _modal=useState(null),modal=_modal[0],setModal=_modal[1];
+  var _wlFilter=useState(null),wlFilter=_wlFilter[0],setWlFilter=_wlFilter[1];
+  var _locs=useState(function(){return LS.g('locs',DEF_LOCS)}),locs=_locs[0],setLocs=_locs[1];
+  var _sr=useState(false),showRisk=_sr[0],setShowRisk=_sr[1];
+  var _pwVal=useState(''),pwVal=_pwVal[0],setPwVal=_pwVal[1];
+  var _authFilt=useState(null),authFilter=_authFilt[0],setAuthFilter=_authFilt[1];
+  var _search=useState(''),searchTerm=_search[0],setSearchTerm=_search[1];
+  
+  // Navigate to a patient's most relevant appointment detail
+  var goToPatient=function(pid,apId){
+    if(apId){setSelAp(apId);setPg('wl');return}
+    // Find the most relevant appointment: nearest future, or most recent
+    var ptAppts=(appts||[]).filter(function(a){return a.pid===pid}).sort(function(a,b){return dU(a.date)-dU(b.date)});
+    var future=ptAppts.filter(function(a){return dU(a.date)>=0});
+    if(future.length>0){setSelAp(future[0].id);setPg('wl')}
+    else if(ptAppts.length>0){setSelAp(ptAppts[ptAppts.length-1].id);setPg('wl')}
+  };
+  
+  // Search filter helper
+  var matchesSearch=function(pt,term){
+    if(!term)return true;
+    var t=term.toLowerCase();
+    return (pt.first+' '+pt.last).toLowerCase().indexOf(t)>=0||
+           (pt.last+', '+pt.first).toLowerCase().indexOf(t)>=0||
+           (pt.mrn||'').toLowerCase().indexOf(t)>=0;
+  };
+  
+  // Persist
+  useEffect(function(){LS.s('pts',pts)},[pts]);
+  useEffect(function(){LS.s('ap',appts)},[appts]);
+  useEffect(function(){LS.s('au',auths)},[auths]);
+  
+  // Helpers
+  var P=function(pid){return pts.find(function(p){return p.id===pid})||{first:'?',last:'?',mrn:'?'}};
+  var updateAp=function(id,fn){setAppts(function(prev){return prev.map(function(a){return a.id===id?fn(a):a})})};
+  
+  // Finance toggle
+  var handleFinToggle=function(){
+    if(finUnlocked){setFinUnlocked(false);return}
+    setModal({type:'password'});
+  };
+  var handleFinPassword=function(pw){
+    sha256(pw).then(function(hash){
+      if(hash===FIN_HASH){setFinUnlocked(true);setModal(null)}
+      else{alert('Incorrect password')}
+    });
+  };
+  
+  // Counts for sidebar
+  var counts=useMemo(function(){
+    var incomplete=0,needOrder=0,pendingAuth=0;
+    (appts||[]).forEach(function(a){
+      var du=dU(a.date);if(du<0||du>14)return;
+      var wfSteps=getWF(a.type,P(a.pid).insType);
+      var comp=wfCompletion(wfSteps,a.wf);
+      if(!comp.complete)incomplete++;
+      if(a.type==='Infusion'&&a.wf.drug!=='done'&&a.wf.drug!=='na'&&du>0&&du<=14)needOrder++;
+    });
+    (auths||[]).forEach(function(a){var s=inferAuthStatus(a);if(s==='pending')pendingAuth++});
+    return {incomplete:incomplete,needOrder:needOrder,pendingAuth:pendingAuth};
+  },[appts,auths,pts]);
+  
+  // Navigate to worklist with filter
+  var goWl=function(filter){setWlFilter(filter);setPg('wl');setSelAp(null)};
+  
+  // Dashboard content
+  var renderDash=function(){
+    var today=(appts||[]).filter(function(a){return dU(a.date)===0});
+    var tomorrow=(appts||[]).filter(function(a){return dU(a.date)===1});
+    var thisWeek=(appts||[]).filter(function(a){var du=dU(a.date);return du>=0&&du<=5});
+    
+    // At-risk calculations
+    var atRiskItems=[];var totalRevRisk=0;var totalCostRisk=0;
+    (appts||[]).forEach(function(a){
+      if(a.type!=='Infusion'||!a.med)return;
+      var du=dU(a.date);if(du<0)return;
+      var wfSteps=getWF(a.type,(P(a.pid)||{}).insType);
+      var comp=wfCompletion(wfSteps,a.wf);
+      if(comp.complete)return;
+      var med=GM(a.med);if(!med)return;
+      var rev=aspRevenue(med);var cost=gpoCost(med);
+      totalRevRisk+=rev;if(cost)totalCostRisk+=cost;
+      atRiskItems.push({id:a.id,p:P(a.pid),med:med,date:a.date,du:du,rev:rev,cost:cost,loc:a.loc,
+        pct:comp.pct});
+    });
+    atRiskItems.sort(function(a,b){return b.rev-a.rev});
+    
+    // Critical/Warning items
+    var critical=[],warning=[],upcoming=[];
+    (appts||[]).forEach(function(a){
+      var du=dU(a.date);if(du<0||du>14)return;
+      var pt=P(a.pid);
+      var wfSteps=getWF(a.type,pt.insType);
+      var comp=wfCompletion(wfSteps,a.wf);
+      if(comp.complete)return;
+      var item={id:a.id,p:pt,type:a.type,date:a.date,du:du,loc:a.loc,med:a.med?GM(a.med):null,pct:comp.pct};
+      if(du<=1)critical.push(item);else if(du<=5)warning.push(item);else upcoming.push(item);
+    });
+    
+    
+    return h('div',null,
+      h('div',{className:'fb mb2'},h('h2',{style:{fontSize:16,fontWeight:800}},'Dashboard'),h('span',{className:'mu'},new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}))),
+      // Stat cards grid
+      h('div',{className:'sg mb2',style:{gridTemplateColumns:'repeat(4,1fr)'}},
+        h(StatCard,{label:'Today',value:today.length,color:'#1e40af',sub:'appointments',onClick:function(){goWl({day:'today'})}}),
+        h(StatCard,{label:'Tomorrow',value:tomorrow.length,color:'#1e40af',sub:'appointments',onClick:function(){goWl({day:'tomorrow'})}}),
+        h(StatCard,{label:'🔴 Critical (0-1d)',value:critical.length,color:'#b91c1c',sub:'incomplete',onClick:function(){goWl({urgent:'critical'})}}),
+        h(StatCard,{label:'⚠️ This Week',value:warning.length,color:'#a16207',sub:'incomplete',onClick:function(){goWl({week:'this'})}})
+      ),
+      h('div',{className:'sg mb2',style:{gridTemplateColumns:'repeat(4,1fr)'}},
+        h(StatCard,{label:'⏳ Pending Auths',value:counts.pendingAuth,color:'#a16207',onClick:function(){setAuthFilter('pending');setPg('auth')}}),
+        h(StatCard,{label:'💊 Need Drug Order',value:counts.needOrder,color:'#7c3aed',onClick:function(){setPg('dr')}}),
+        h(StatCard,{label:'💰 Rev at Risk',value:totalRevRisk>0?Fmt(totalRevRisk):'$0',color:'#b91c1c',
+          sub:atRiskItems.length+' infusions — click for detail',onClick:function(){setShowRisk(!showRisk)}}),
+        finUnlocked?h(StatCard,{label:'🔒 Drug Cost at Risk',value:totalCostRisk>0?Fmt(totalCostRisk):'$0',color:'#7c3aed',
+          sub:'Actual out-of-pocket exposure',onClick:function(){setShowRisk(!showRisk)}}):null
+      ),
+      // At-risk detail (toggleable)
+      showRisk&&atRiskItems.length>0&&h('div',{className:'cd mb',style:{borderLeft:'4px solid #b91c1c'}},
+        h('div',{className:'cd-h fb'},
+          h('h3',{style:{color:'#b91c1c'}},'💰 Revenue at Risk — '+Fmt(totalRevRisk)+(finUnlocked?' | Drug Cost: '+Fmt(totalCostRisk):'')),
+          h('button',{className:'btn bw bsm',onClick:function(){setShowRisk(false)}},'✕ Close')
+        ),
+        h('div',{className:'cd-b'},
+          h('table',null,
+            h('thead',null,h('tr',null,
+              h('th',null,'Patient'),h('th',null,'Med'),h('th',null,'J-Code'),h('th',null,'Date'),h('th',null,'Workflow'),
+              h('th',{style:{textAlign:'right'}},'Rev at Risk'),
+              finUnlocked?h('th',{style:{textAlign:'right'}},'Drug Cost'):null
+            )),
+            h('tbody',null,
+              atRiskItems.map(function(item){
+                return h('tr',{key:item.id,className:'ck',onClick:function(){setSelAp(item.id);setPg('wl')}},
+                  h('td',{className:'fw'},item.p.last+', '+item.p.first),
+                  h('td',null,item.med.b),
+                  h('td',{className:'mono',style:{fontSize:9}},item.med.j),
+                  h('td',{className:'fw',style:{color:item.du<=2?'#b91c1c':'inherit'}},fD(item.date)+' ('+item.du+'d)'),
+                  h('td',null,h('div',{className:'fc'},h('div',{className:'prg',style:{width:40}},h('div',{className:'prg-b',style:{width:item.pct+'%',background:item.pct<50?'#b91c1c':'#a16207'}})),h('span',{style:{fontSize:8}},item.pct+'%'))),
+                  h('td',{className:'mono fw',style:{textAlign:'right',color:'#b91c1c'}},FmtD(item.rev)),
+                  finUnlocked?h('td',{className:'mono fw',style:{textAlign:'right',color:'#7c3aed'}},item.cost?FmtD(item.cost):'—'):null
+                );
+              }),
+              h('tr',{style:{borderTop:'2px solid #1e293b',background:'#f8fafc'}},
+                h('td',{colSpan:5,style:{fontWeight:800,textAlign:'right'}},'TOTAL'),
+                h('td',{className:'mono fw',style:{textAlign:'right',color:'#b91c1c'}},FmtD(totalRevRisk)),
+                finUnlocked?h('td',{className:'mono fw',style:{textAlign:'right',color:'#7c3aed'}},FmtD(totalCostRisk)):null
+              )
+            )
+          )
+        )
+      ),
+      // Critical / Warning / Upcoming sections
+      critical.length>0&&h('div',{className:'cd mb',style:{borderLeft:'4px solid #b91c1c'}},
+        h('div',{className:'cd-h'},h('h3',{style:{color:'#b91c1c'}},'🔴 CRITICAL — '+critical.length+' incomplete (today/tomorrow)')),
+        h('div',{className:'cd-b'},critical.map(function(item){
+          return h('div',{key:item.id,className:'ai',onClick:function(){setSelAp(item.id);setPg('wl')}},
+            h('div',{className:'ai-i',style:{background:'#fecaca'}},item.du===0?'📍':'⚡'),
+            h('div',{className:'ai-b'},
+              h('div',{className:'ai-t'},item.p.last+', '+item.p.first+' — '+item.type),
+              h('div',{className:'ai-d'},fD(item.date)+' • '+item.loc+(item.med?' • '+item.med.b:''))
+            ),
+            h('div',{className:'prg',style:{width:50}},h('div',{className:'prg-b',style:{width:item.pct+'%',background:'#b91c1c'}})),
+            h('span',{style:{fontSize:9,fontWeight:600}},item.pct+'%')
+          );
+        }))
+      ),
+      warning.length>0&&h('div',{className:'cd mb',style:{borderLeft:'4px solid #a16207'}},
+        h('div',{className:'cd-h'},h('h3',{style:{color:'#a16207'}},'⚠️ THIS WEEK — '+warning.length+' incomplete')),
+        h('div',{className:'cd-b'},warning.map(function(item){
+          return h('div',{key:item.id,className:'ai',onClick:function(){setSelAp(item.id);setPg('wl')}},
+            h('div',{className:'ai-i',style:{background:'#fef08a'}},item.type==='New Patient'?'👤':'💉'),
+            h('div',{className:'ai-b'},
+              h('div',{className:'ai-t'},item.p.last+', '+item.p.first+' — '+item.type),
+              h('div',{className:'ai-d'},fD(item.date)+' ('+item.du+'d) • '+item.loc+(item.med?' • '+item.med.b:''))
+            ),
+            h('div',{className:'prg',style:{width:50}},h('div',{className:'prg-b',style:{width:item.pct+'%',background:'#a16207'}})),
+            h('span',{style:{fontSize:9,fontWeight:600}},item.pct+'%')
+          );
+        }))
+      ),
+      upcoming.length>0&&h('div',{className:'cd mb',style:{borderLeft:'4px solid #1e40af'}},
+        h('div',{className:'cd-h'},h('h3',{style:{color:'#1e40af'}},'📋 NEXT WEEK — '+upcoming.length+' incomplete')),
+        h('div',{className:'cd-b'},upcoming.map(function(item){
+          return h('div',{key:item.id,className:'ai',onClick:function(){setSelAp(item.id);setPg('wl')}},
+            h('div',{className:'ai-i',style:{background:'#dbeafe'}},item.type==='New Patient'?'👤':'💉'),
+            h('div',{className:'ai-b'},
+              h('div',{className:'ai-t'},item.p.last+', '+item.p.first+' — '+item.type),
+              h('div',{className:'ai-d'},fD(item.date)+' ('+item.du+'d) • '+item.loc+(item.med?' • '+item.med.b:''))
+            ),
+            h('div',{className:'prg',style:{width:50}},h('div',{className:'prg-b',style:{width:item.pct+'%',background:'#1e40af'}})),
+            h('span',{style:{fontSize:9,fontWeight:600}},item.pct+'%')
+          );
+        }))
+      )
+    );
+  };
+  
+  // Worklist / Detail view
+  var renderWorklist=function(){
+    if(selAp){
+      var ap=appts.find(function(a){return a.id===selAp});
+      if(!ap)return h('div',null,'Not found');
+      var pt=P(ap.pid);
+      return h(PatientDetail,{
+        ap:ap,pt:pt,auths:auths,finUnlocked:finUnlocked,
+        onBack:function(){setSelAp(null)},
+        onUpdateWf:function(k,v){updateAp(ap.id,function(a){var wf=Object.assign({},a.wf);wf[k]=v;return Object.assign({},a,{wf:wf})})},
+        onUpdatePt:function(k,v){setPts(function(prev){return prev.map(function(p){return p.id===pt.id?Object.assign({},p,function(){var o={};o[k]=v;return o}()):p})})},
+        onUpdateRef:function(k,v){setPts(function(prev){return prev.map(function(p){
+          if(p.id!==pt.id)return p;
+          var ref=Object.assign({},p.referral||{received:false,provider:'',date:'',number:'',expires:'',visits:null});
+          ref[k]=v;
+          if(k==='provider'&&v&&!ref.received)ref.received=true;
+          return Object.assign({},p,{referral:ref});
+        })})},
+        onUpdateAuth:function(k,v){updateAp(ap.id,function(a){
+          var ad=Object.assign({},a.authData||{authNum:'',start:'',end:'',approvedUnits:0,usedUnits:0,payer:'',paSubmitter:'specialist',status:'pending'});
+          ad[k]=v;
+          return Object.assign({},a,{authData:ad});
+        })},
+        onUpdateAp:function(k,v){updateAp(ap.id,function(a){var o={};o[k]=v;return Object.assign({},a,o)})},
+        onUpdateGrace:function(k,v){setPts(function(prev){return prev.map(function(p){
+          if(p.id!==pt.id)return p;
+          var gp=Object.assign({},p.gracePeriod||{paidThrough:'',verifiedDate:''});
+          gp[k]=v;
+          return Object.assign({},p,{gracePeriod:gp});
+        })})},
+        onMarkEdited:function(field){setPts(function(prev){return prev.map(function(p){
+          if(p.id!==pt.id)return p;
+          var ef=p.editedFields?p.editedFields.slice():[];
+          if(ef.indexOf(field)<0)ef.push(field);
+          return Object.assign({},p,{editedFields:ef});
+        })})}
+      });
+    }
+    // Worklist table
+    var f=(appts||[]).filter(function(a){var du=dU(a.date);return du>=0&&du<=14});
+    if(wlFilter){
+      var isIncomplete=function(a){
+        var pt=P(a.pid);
+        var wfSteps=getWF(a.type,pt.insType);
+        var comp=wfCompletion(wfSteps,a.wf);
+        return !comp.complete;
+      };
+      if(wlFilter.day==='today')f=f.filter(function(a){return dU(a.date)===0});
+      else if(wlFilter.day==='tomorrow')f=f.filter(function(a){return dU(a.date)===1});
+      else if(wlFilter.week==='this')f=f.filter(function(a){var du=dU(a.date);return du>=2&&du<=5&&isIncomplete(a)});
+      else if(wlFilter.urgent==='critical')f=f.filter(function(a){return dU(a.date)<=1&&isIncomplete(a)});
+    }
+    f.sort(function(a,b){return dU(a.date)-dU(b.date)});
+    var filterLabel=wlFilter?(wlFilter.day==='today'?"Today's Appointments":wlFilter.day==='tomorrow'?"Tomorrow":wlFilter.week==='this'?'This Week — Incomplete Only':wlFilter.urgent==='critical'?'Critical — Incomplete (0-1 days)':'Worklist'):'Worklist — Next 14 Days';
+    // Apply search filter
+    if(searchTerm){f=f.filter(function(a){return matchesSearch(P(a.pid),searchTerm)})}
+    
+    return h('div',null,
+      h('div',{className:'fb mb2'},
+        h('h2',{style:{fontSize:16,fontWeight:800}},filterLabel+' ('+f.length+')'),
+        wlFilter?h('button',{className:'btn bw bsm',onClick:function(){setWlFilter(null)}},'✕ Clear Filter'):null
+      ),
+      h(SearchBar,{value:searchTerm,onChange:setSearchTerm,placeholder:'Search worklist by patient name or MRN...'}),
+      h('div',{className:'cd'},h('div',{className:'cd-b'},
+        f.length===0?h('div',{className:'ety'},'No appointments match this filter'):
+        h('table',null,
+          h('thead',null,h('tr',null,h('th',null,'Patient'),h('th',null,'Type'),h('th',null,'Date'),h('th',null,'Location'),h('th',null,'Med'),h('th',null,'Insurance'),h('th',null,'Progress'))),
+          h('tbody',null,f.map(function(a){
+            var pt=P(a.pid);var med=a.med?GM(a.med):null;
+            var wfSteps=getWF(a.type,pt.insType);
+            var comp=wfCompletion(wfSteps,a.wf);
+            var pct=comp.pct;
+            var du=dU(a.date);
+            return h('tr',{key:a.id,className:'ck'+(du<=1&&pct<100?' ur':pct<50&&du<=5?' uy':''),onClick:function(){setSelAp(a.id)}},
+              h('td',{className:'fw'},pt.last+', '+pt.first),
+              h('td',null,h('span',{className:'bg',style:{background:a.type==='Infusion'?'#dbeafe':a.type==='New Patient'?'#ede9fe':'#f1f5f9',
+                color:a.type==='Infusion'?'#1e40af':a.type==='New Patient'?'#7c3aed':'#475569'}},a.type)),
+              h('td',{className:'fw',style:{color:du<=1?'#b91c1c':du<=3?'#a16207':'inherit'}},fD(a.date)+' ('+(du===0?'Today':du===1?'Tmrw':du+'d')+')'),
+              h('td',{style:{fontSize:9}},a.loc),
+              h('td',null,med?med.b:'—'),
+              h('td',null,h('span',{style:{fontSize:9}},(getInsType(pt.insType)||{}).short||'—')),
+              h('td',null,h('div',{className:'fc'},h('div',{className:'prg',style:{width:50}},h('div',{className:'prg-b',style:{width:pct+'%',background:pct===100?'#047857':pct>=50?'#a16207':'#b91c1c'}})),h('span',{style:{fontSize:9,fontWeight:600}},pct+'%')))
+            );
+          }))
+        )
+      ))
+    );
+  };
+  
+  // Auth Tracker
+  var renderAuthTracker=function(){
+    var filteredAuths=(auths||[]).filter(function(a){
+      var pt=P(a.pid);
+      if(!matchesSearch(pt,searchTerm))return false;
+      if(!authFilter)return true;
+      if(authFilter==='pending')return inferAuthStatus(a)==='pending';
+      if(authFilter==='expired')return inferAuthStatus(a)==='expired';
+      if(authFilter==='denied')return inferAuthStatus(a)==='denied';
+      return true;
+    });
+    var filterLabel=authFilter?authFilter.charAt(0).toUpperCase()+authFilter.slice(1)+' Authorizations':'All Authorizations';
+    return h('div',null,
+      h('div',{className:'fb mb2'},
+        h('h2',{style:{fontSize:16,fontWeight:800}},filterLabel+' ('+filteredAuths.length+')'),
+        authFilter?h('button',{className:'btn bw bsm',onClick:function(){setAuthFilter(null)}},'✕ Show All'):null
+      ),
+      h(SearchBar,{value:searchTerm,onChange:setSearchTerm,placeholder:'Search auths by patient name or MRN...'}),
+      h('div',{className:'cd'},h('div',{className:'cd-b'},
+        filteredAuths.length===0?h('div',{className:'ety'},'No authorizations match this filter'):
+        h('table',null,
+          h('thead',null,h('tr',null,h('th',null,'Patient'),h('th',null,'Next Appt'),h('th',null,'Med'),h('th',null,'Payer'),h('th',null,'Auth #'),h('th',null,'Start'),h('th',null,'End'),h('th',null,'Units'),h('th',null,'Status'),h('th',null,'Submitter'))),
+          h('tbody',null,(filteredAuths).map(function(a){
+            var pt=P(a.pid);var med=GM(a.med);var rs=realAuthStatus(a);
+            var adl=apptDateLabel(appts,a.pid);
+            return h('tr',{key:a.id,className:'ck',onClick:function(){goToPatient(a.pid)}},
+              h('td',{className:'fw',style:{color:'#1e40af',textDecoration:'underline',cursor:'pointer'}},pt.last+', '+pt.first),
+              h('td',null,h('div',null,h('span',{style:{color:adl.color,fontWeight:600,fontSize:10}},adl.icon+' '+adl.text),adl.sub?h('div',{style:{fontSize:8,color:'#94a3b8'}},adl.sub):null)),
+              h('td',null,med?med.b:'—'),
+              h('td',null,a.payer||'—'),
+              h('td',{className:'mono',style:{fontSize:9}},a.authNum||'—'),
+              h('td',null,a.start?fD(a.start):'—'),
+              h('td',{style:{color:a.end&&dU(a.end)<0?'#b91c1c':a.end&&dU(a.end)<30?'#a16207':'inherit',fontWeight:600}},a.end?fD(a.end):'—'),
+              h('td',null,a.approvedUnits?(a.usedUnits||0)+'/'+a.approvedUnits:'—'),
+              h('td',null,h('span',{className:'bg',style:{background:rs==='approved'?'#d1fae5':rs==='expired'?'#fecaca':rs==='denied'?'#fecaca':'#fef08a',
+                color:rs==='approved'?'#047857':rs==='expired'||rs==='denied'?'#b91c1c':'#a16207'}},rs.toUpperCase())),
+              h('td',null,a.paSubmitter==='pcp'?h('span',{className:'bg',style:{background:'#ede9fe',color:'#7c3aed'}},'PCP'):h('span',{className:'mu'},'Specialist'))
+            );
+          }))
+        )
+      ))
+    );
+  };
+  
+  // Patient list
+  var renderPtList=function(){
+    var filteredPts=(pts||[]).filter(function(p){return matchesSearch(p,searchTerm)});
+    return h('div',null,
+      h('div',{className:'fb mb2'},
+        h('h2',{style:{fontSize:16,fontWeight:800}},'Patient List ('+filteredPts.length+')'),
+        null
+      ),
+      h(SearchBar,{value:searchTerm,onChange:setSearchTerm,placeholder:'Search by patient name or MRN...'}),
+      h('div',{className:'cd'},h('div',{className:'cd-b'},
+        filteredPts.length===0?h('div',{className:'ety'},'No patients match this search'):
+        h('table',null,
+          h('thead',null,h('tr',null,h('th',null,'Name'),h('th',null,'MRN'),h('th',null,'Next Appt'),h('th',null,'Insurance'),h('th',null,'Plan Type'),h('th',null,'PCP'),h('th',null,'Referral'))),
+          h('tbody',null,filteredPts.map(function(p){
+            var ins=getInsType(p.insType);
+            var ptAppts=(appts||[]).filter(function(a){return a.pid===p.id});
+            var adl=apptDateLabel(appts,p.id);
+            return h('tr',{key:p.id,className:'ck',onClick:function(){goToPatient(p.id)}},
+              h('td',{className:'fw',style:{color:'#1e40af',textDecoration:'underline',cursor:'pointer'}},p.last+', '+p.first),
+              h('td',{className:'mono'},p.mrn),
+              h('td',null,h('div',null,h('span',{style:{color:adl.color,fontWeight:600,fontSize:10}},adl.icon+' '+adl.text),adl.sub?h('div',{style:{fontSize:8,color:'#94a3b8'}},adl.sub):null)),
+              h('td',null,p.ins),
+              h('td',null,ins?h('span',{className:'bg',style:{background:'#dbeafe',color:'#1e40af'}},ins.short):'—'),
+              h('td',null,p.pcp||'—'),
+              h('td',null,p.referral&&p.referral.received?h('span',{className:'bg',style:{background:'#d1fae5',color:'#047857'}},'✓ On File'):h('span',{className:'bg',style:{background:'#fecaca',color:'#b91c1c'}},'None'))
+            );
+          }))
+        )
+      ))
+    );
+  };
+  
+  // Password modal
+  var pwModal=modal&&modal.type==='password';
+  
+  return h('div',{className:'app'},
+    h(Sidebar,{pg:pg,setPg:function(p){setPg(p);setSelAp(null);setWlFilter(null);setAuthFilter(null);setSearchTerm('')},counts:counts,finUnlocked:finUnlocked,onFinToggle:handleFinToggle}),
+    h('div',{className:'mn'},h('div',{className:'pg'},
+      pg==='dash'?renderDash():
+      pg==='wl'?renderWorklist():
+      pg==='dr'?h('div',null,h('h2',{style:{fontSize:16,fontWeight:800,marginBottom:10}},'Drug Orders'),h('div',{className:'ety'},'Drug Orders page — coming in next build iteration')):
+      pg==='auth'?renderAuthTracker():
+      pg==='pts'?renderPtList():
+      pg==='up'?h('div',null,h('h2',{style:{fontSize:16,fontWeight:800,marginBottom:10}},'Upload Schedule'),h('div',{className:'ety'},'CSV Upload — coming in next build iteration')):
+      pg==='se'?h('div',null,h('h2',{style:{fontSize:16,fontWeight:800,marginBottom:10}},'Settings'),h('div',{className:'ety'},'Settings — coming in next build iteration')):
+      null
+    )),
+    pwModal&&h('div',{className:'mo',onClick:function(){setModal(null);setPwVal('')}},
+      h('div',{className:'mo-c',onClick:function(e){e.stopPropagation()}},
+        h('h3',{style:{fontSize:14,marginBottom:8}},'🔒 Finance View — Enter Password'),
+        h('p',{style:{fontSize:10,color:'#64748b',marginBottom:10}},'This view contains drug acquisition costs and margin data. Access is restricted to authorized personnel.'),
+        h('input',{type:'password',value:pwVal,placeholder:'Enter password',autoFocus:true,
+          onChange:function(e){setPwVal(e.target.value)},
+          onKeyDown:function(e){if(e.key==='Enter')handleFinPassword(pwVal)}}),
+        h('div',{className:'fc',style:{gap:8,marginTop:10,justifyContent:'flex-end'}},
+          h('button',{className:'btn bw',onClick:function(){setModal(null);setPwVal('')}},'Cancel'),
+          h('button',{className:'btn bpr',onClick:function(){handleFinPassword(pwVal)}},'Unlock')
+        )
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+</script></body></html>
